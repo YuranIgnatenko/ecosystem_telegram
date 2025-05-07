@@ -8,6 +8,7 @@ from bots import books
 from bots import news
 from bots import works
 from bots import meme
+from bots import cms
 
 from services.telegram_scrapper_services import TelegramScrapperService
 from services.parser_images_service import ParserImagesService
@@ -28,6 +29,8 @@ news_bot = news.NewsBot(config, scrapper_service)
 books_bot = books.BooksBot(config, scrapper_service)
 images_bot = images.ImagesBot(config, images_service)
 memes_bot = meme.MemesBot(config, memes_service)
+
+cms_bot = cms.CmsBot(config, [works_bot, news_bot, books_bot, images_bot, memes_bot])
 
 async def scheduler_posting():
 	schedule_list = config.get_schedule_posting()
@@ -54,7 +57,8 @@ async def main():
 		works_bot.launch(),
 		news_bot.launch(),
 		books_bot.launch(),
-		memes_bot.launch()
+		memes_bot.launch(),
+		cms_bot.launch()
 	)
 
 
