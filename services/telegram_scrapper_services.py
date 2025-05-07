@@ -1,12 +1,16 @@
 from lib_telegram_scrap.scrapper import Scraper
 import asyncio
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
+import logging
 
-class ScrapperService:
+class TelegramScrapperService:
 	def __init__(self, config):
+		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
 		self.config = config
 		self.scrapper = Scraper(self.config.get_api_id(), self.config.get_api_hash())
 
 	async def get_last_messages(self, bot_name:str):
+		logging.info(f"Получение последних сообщений для бота {bot_name} работает сервис {self.type_service}")
 		results = []
 		dict_channels = self.config.get_urls_channels(bot_name)
 		for url_name, url_id in dict_channels.items():

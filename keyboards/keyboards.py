@@ -2,7 +2,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
 from aiogram import types
 
-from config import Config
+from utils.config import Config
 
 def list_bots():
 	config = Config()

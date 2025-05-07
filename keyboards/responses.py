@@ -1,4 +1,4 @@
-from bots import keyboards
+from keyboards import keyboards
 
 async def answer_start(message, bot_name:str):
 	await message.answer(

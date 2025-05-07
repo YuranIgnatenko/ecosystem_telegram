@@ -3,13 +3,13 @@
 # from aiogram import Bot, Dispatcher, types
 # from aiogram.filters.command import Command
 # from aiogram.types import Message
-# from config import Config
+# from utils.config import Config
 # from bots import keyboards
 # from services.cms_service import CmsService
 # from bots.news import NewsBot
 # from bots.works import WorksBot
 # from bots.books import BooksBot
-# from bots import responses
+# from keyboards import responses
 
 
 

@@ -9,4 +9,5 @@ config.ini
 *.session
 _*
 services/_*
-
+logs/*
+test.py

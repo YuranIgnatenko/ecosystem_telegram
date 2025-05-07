@@ -10,7 +10,7 @@
 ```bash
 git clone https://github.com/YuranIgnatenko/ecosystem_telegram.git
 cd ecosystem_telegram
-pip install -r requirements.txt
+pip install -r requirements.
 ```
 
 ## Настройка платформы

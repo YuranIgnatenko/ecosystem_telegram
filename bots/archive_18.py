@@ -6,11 +6,12 @@ from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile
 
-from config import Config
-from services.images_service import ImagesService
+from utils.config import Config
+from services.images_service import ParserImagesService
 from services.archive_18_service import Archive18Service
 
-logging.basicConfig(level=logging.INFO)
+import logging
+
 
 bot_name = "archive_18_bot"
 
@@ -18,7 +19,7 @@ config = Config()
 bot = Bot(token=config.get_token(bot_name))
 dp = Dispatcher()
 archive_18_service = Archive18Service()
-images_service = ImagesService()
+images_service = ParserImagesService()
 bias = 2
 
 @dp.message(Command("posting"))
@@ -44,5 +45,6 @@ async def start(message: Message):
 
 
 async def launch():
+	await bot.delete_webhook(drop_pending_updates=True)
 	await dp.start_polling(bot)
 
