@@ -1,3 +1,27 @@
+# ecosystem_telegram
+
+`ecosystem_telegram` это платформа для работы экосиистемы из каналов для размещения контента и ботов 
+с настройки для генерации и автопостинга материалоа
+книги, статьи, цитаты, новости, мемы, картинки, объявления по работе и прочее
+
+
+## Использование репозитория GitHub
+
+```bash
+git clone https://github.com/YuranIgnatenko/ecosystem_telegram.git
+cd ecosystem_telegram
+```
+
+## Настройка платформы
+
+```ini
+# создание файла конфигурации
+# или измените файл configure.ini
+# и сохраните с именем config.ini
+code config.ini # nano config.ini
+
+# Пример структуры содержимого
+# глобальные настройки
 [global]
 api_hash = your_api_hash
 api_id = your_api_id
@@ -7,6 +31,7 @@ count_posting_images = 6
 count_posting_memes = 5
 schedule_posting = 10:00,01:55,01:56,02:04,02:05,02:06,02:07
 
+# настройки каждого бота индивидуально
 [cms_bot]
 token = your_token_cms_bot
 channel_chat_id = your_channel_chat_id_cms_bot
@@ -48,4 +73,15 @@ token = your_token_books_bot
 urls_channels = https://t.me/channel_url_1::0,
 				https://t.me/channel_url_2::0,
 				https://t.me/channel_url_3::0
+
+#
+
+```
+
+
+## Заруск
+
+```bash
+python main.py
+```
 
