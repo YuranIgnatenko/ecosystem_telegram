@@ -18,10 +18,18 @@ class CommandHandlers:
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
-		await responses.answer_start(message, self.bot_name)
+		if message.from_user.id in self.config.get_admin_user_id():
+			await responses.answer_start(message, self.bot_name)
+		else:
+			await message.answer("🔒 У вас нет доступа к этому боту")
 
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
+		
+		if callback.from_user.id not in self.config.get_admin_user_id():
+			await callback.answer("🔒 У вас нет доступа к этому боту")
+			return	
+
 		if callback.data == "switch_posting":
 			self.config.switch_status(self.bot_name)
 

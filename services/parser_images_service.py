@@ -11,12 +11,12 @@ class ParserImagesService:
 							parser.URL_ABSTRAKT]
 		self.url = random.choice(self.array_urls)
 		self.parser = parser.Parser(self.url)
-		self.count = self.config.get_count_posting_images()
+
 
 	async def get_random_files(self):
 		logging.info(f"Получение случайных файлов - работает сервис {self.type_service}")
 		self.parser.URL_SRC = random.choice(self.array_urls)
-		tasks = [self.parser.get_random_file() for _ in range(self.count)]
+		tasks = [self.parser.get_random_file() for _ in range(self.config.get_count_posting_images())]
 		list_files = await asyncio.gather(*tasks)
 		return list_files
 	

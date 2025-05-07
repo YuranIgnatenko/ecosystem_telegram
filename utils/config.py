@@ -63,6 +63,9 @@ class Config:
 		temp =  self.config['global']['schedule_posting']
 		return [f"{time.strip()}:00" for time in temp.split(",")]
 
+	def get_admin_user_id(self) -> list:
+		return [int(id.strip()) for id in self.config['global']['admin_user_id'].split(",")]	
+
 	# SETTINGS - SET NEW VALUES TO FILE CONFIG
 
 	def switch_status(self, bot_name: str):
