@@ -1,0 +1,12 @@
+config.ini
+*.jpg
+*.png
+*.gif
+*.mp4
+*.avi
+*.mkv
+
+*.session
+_*
+services/_*
+
