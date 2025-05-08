@@ -18,9 +18,15 @@ from utils.logger import setup_logger
 import logging
 
 from aiogram.client.session.aiohttp import AiohttpSession
+
 from fp.fp import FreeProxy
 
-session = AiohttpSession(proxy=FreeProxy().get())
+
+# selected if using server anywherepython
+#session = AiohttpSession(proxy="http://proxy.server:3128")
+
+#selected if simple launch local machine
+session = AiohttpSession()
 
 config = config.Config()
 logger = setup_logger()
