@@ -15,10 +15,10 @@ from handlers.command_handlers import CommandHandlers
 import logging
 
 class MemesBot:
-	def __init__(self, config, service):
+	def __init__(self, config, service, session):
 		self.bot_name = "memes_bot"	
 		self.config = config
-		self.bot = Bot(token=self.config.get_token(self.bot_name))
+		self.bot = Bot(token=self.config.get_token(self.bot_name), session=session)
 		
 		self.service = service
 		self.dp = Dispatcher()

@@ -17,6 +17,11 @@ from services.parser_memes_service import ParserMemesService
 from utils.logger import setup_logger
 import logging
 
+from aiogram.client.session.aiohttp import AiohttpSession
+from fp.fp import FreeProxy
+
+session = AiohttpSession(proxy=FreeProxy().get())
+
 config = config.Config()
 logger = setup_logger()
 
@@ -24,13 +29,13 @@ scrapper_service = TelegramScrapperService(config)
 images_service = ParserImagesService(config)
 memes_service = ParserMemesService(config)
 
-works_bot = works.WorksBot(config, scrapper_service)
-news_bot = news.NewsBot(config, scrapper_service)
-books_bot = books.BooksBot(config, scrapper_service)
-images_bot = images.ImagesBot(config, images_service)
-memes_bot = meme.MemesBot(config, memes_service)
+works_bot = works.WorksBot(config, scrapper_service, session)
+news_bot = news.NewsBot(config, scrapper_service, session)
+books_bot = books.BooksBot(config, scrapper_service, session)
+images_bot = images.ImagesBot(config, images_service, session)
+memes_bot = meme.MemesBot(config, memes_service, session)
 
-cms_bot = cms.CmsBot(config, [works_bot, news_bot, books_bot, images_bot, memes_bot])
+cms_bot = cms.CmsBot(config, [works_bot, news_bot, books_bot, images_bot, memes_bot], session)
 
 async def scheduler_posting():
 	schedule_list = config.get_schedule_posting()

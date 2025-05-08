@@ -24,10 +24,10 @@ from keyboards.cms import main_menu
 import logging
 
 class CmsBot:
-	def __init__(self, config, list_bots):
+	def __init__(self, config, list_bots, session):
 		self.bot_name = "cms_bot"
 		self.config = config
-		self.bot = Bot(token=self.config.get_token(self.bot_name))
+		self.bot = Bot(token=self.config.get_token(self.bot_name), session=session)
 		self.dp = Dispatcher()
 		self.list_bots = list_bots
 		self.cms_handlers = CmsHandlers(self.config, self.bot_name, self.bot, self.list_bots)

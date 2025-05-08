@@ -15,10 +15,10 @@ import logging
 dp = Dispatcher()
 
 class NewsBot:
-	def __init__(self, config, service):
+	def __init__(self, config, service, session):
 		self.bot_name = "news_bot"
 		self.config = config
-		self.bot = Bot(token=self.config.get_token(self.bot_name))
+		self.bot = Bot(token=self.config.get_token(self.bot_name), session=session)
 		self.service = service
 		self.dp = Dispatcher()
 
