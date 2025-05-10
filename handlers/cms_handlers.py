@@ -20,6 +20,8 @@ class CmsHandlers:
 		self.message_id_textview = None
 		self.FLAG_WAIT_USERNAME_ADMIN = False
 		self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
+		self.FLAG_BOT_NAME_EDIT = None
+		
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
@@ -41,6 +43,7 @@ class CmsHandlers:
 			self.config.set_notifier_message_body(message.text)
 			self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
 			await message.answer(f"✅ Сообщение для рассылки сохранено")	
+
 
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
@@ -104,10 +107,15 @@ class CmsHandlers:
 				logging.info(temp_status)
 				await tabs.tab_notifier_select_bot(callback, temp_status)
 				await asyncio.sleep(1)
-				await self.bot.send_message(callback.from_user.id, temp_status)
+				# await self.bot.send_message(callback.from_user.id, temp_status)
 				if self.config.get_notifier_access(bot.bot_name):
-					print(f"Рассылка для бота {self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body()}")
+					# print(f"Рассылка для бота {self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body()}")
 					await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body())
+
+		elif callback.data == "tab_reports":
+			await tabs.tab_reports(callback, "🔔 Отчеты")
+
+
 
 	async def posting_telegram_scrapper(self, callback, bot):
 		logging.info(f"Рассылка бота {bot.bot_name}")
@@ -117,7 +125,7 @@ class CmsHandlers:
 		temp_status = "Ожидание ввода команды ..."
 
 		if self.config.get_status(bot.bot_name):
-			print("counter_updates, counter_sent, counter_errors, temp_status", counter_updates, counter_sent, counter_errors, temp_status)
+			# print("counter_updates, counter_sent, counter_errors, temp_status", counter_updates, counter_sent, counter_errors, temp_status)
 			self.config.set_temp_count_updates(bot.bot_name, counter_updates)
 			self.config.set_temp_count_sent(bot.bot_name, counter_sent)
 			self.config.set_temp_count_errors(bot.bot_name, counter_errors)
