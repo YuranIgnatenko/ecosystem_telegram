@@ -14,8 +14,5 @@ def back_button(callback_data:str):
 		text="Назад", 
 		callback_data=callback_data)
 
-def set_full_size_button(builder:InlineKeyboardBuilder):
-	return types.InlineKeyboardButton(
-		text=f"{' '*100}", 
-		callback_data="--")
+
 

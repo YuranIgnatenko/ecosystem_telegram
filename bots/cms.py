@@ -20,7 +20,7 @@ from keyboards import responses
 from utils.config import Config
 
 from handlers.cms_handlers import CmsHandlers
-from keyboards.cms import main_menu
+from keyboards.cms import tabs
 import logging
 
 class CmsBot:
@@ -32,7 +32,8 @@ class CmsBot:
 		self.list_bots = list_bots
 		self.cms_handlers = CmsHandlers(self.config, self.bot_name, self.bot, self.list_bots)
 
-		self.dp.message.register(main_menu.start, Command("start"))
+		self.dp.message.register(self.cms_handlers.start, Command("start"))
+		self.dp.message.register(self.cms_handlers.any_text_handler)
 		self.dp.callback_query.register(self.cms_handlers.callback_handler)
 
 

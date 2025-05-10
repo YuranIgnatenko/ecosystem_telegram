@@ -41,27 +41,30 @@ books_bot = books.BooksBot(config, scrapper_service, session)
 images_bot = images.ImagesBot(config, images_service, session)
 memes_bot = meme.MemesBot(config, memes_service, session)
 
-cms_bot = cms.CmsBot(config, [works_bot, news_bot, books_bot, images_bot, memes_bot], session)
+list_bots = [works_bot, news_bot, books_bot, images_bot, memes_bot]
 
-async def scheduler_posting():
-	schedule_list = config.get_schedule_posting()
-	while True:
-		now = datetime.now().strftime("%H:%M:%S")
-		print(now)
-		if now in schedule_list:
-			config.switch_status_all_bots_TRUE()
-			await works_bot.schedule_posting()
-			await news_bot.schedule_posting()
-			await books_bot.schedule_posting()
-			await images_bot.schedule_posting()
-			await memes_bot.schedule_posting()
-		await asyncio.sleep(1)
+cms_bot = cms.CmsBot(config, list_bots, session)
+
+# async def scheduler_posting():
+# 	schedule_list = config.get_schedule_posting()
+# 	while True:
+# 		now = datetime.now().strftime("%H:%M:%S")
+# 		print(now)
+# 		if now in schedule_list:
+# 			config.switch_status_all_bots_TRUE()
+# 			await works_bot.schedule_posting()
+# 			await news_bot.schedule_posting()
+# 			await books_bot.schedule_posting()
+# 			await images_bot.schedule_posting()
+# 			await memes_bot.schedule_posting()
+# 		await asyncio.sleep(1)
 
 async def main():
 	logging.info("Запуск экосистемы")
 	config.switch_status_all_bots_FALSE()
+	config.switch_counters_all_bots_ZERO()
 	
-
+	print("start")
 	await asyncio.gather(
 		# scheduler_posting(),
 		images_bot.launch(),

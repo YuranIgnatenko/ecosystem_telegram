@@ -8,9 +8,30 @@ class Config:
 		self.config.read('config.ini', encoding='cp1251')
 
 	def get_list_bots(self) -> list:
-		return self.config.sections()
+		temp = []
+		for bot in self.config.sections():
+			if bot in ['global', 'cms_bot']:
+				continue
+			temp.append(bot)
+		return temp
 
 	# SECTION - BOT
+
+	def get_temp_count_updates(self, bot_name:str) -> int:
+		return int(self.config[bot_name]['temp_count_updates'])
+
+	def get_temp_count_sent(self, bot_name:str) -> int:
+		return int(self.config[bot_name]['temp_count_sent'])
+
+	def get_temp_count_errors(self, bot_name:str) -> int:
+		return int(self.config[bot_name]['temp_count_errors'])	
+
+	def get_time_last_started(self, bot_name:str) -> str:
+		temp  = self.config[bot_name]['time_last_started']	
+		if temp.strip() == "":
+			return "00:00"
+		return temp
+
 
 	def get_category_name(self, bot_name:str) -> str:
 		return self.config[bot_name]['category_name']
@@ -65,6 +86,31 @@ class Config:
 
 	def get_admin_user_id(self) -> list:
 		return [int(id.strip()) for id in self.config['global']['admin_user_id'].split(",")]	
+	
+	def get_admin_username(self) -> list:
+		return [username.strip() for username in self.config['global']['admin_username'].split(",")]	
+
+	def delete_admin(self, username:str):
+		old_list = self.get_admin_username()
+		try:
+			old_list.remove(username)
+		except ValueError:
+			logging.error(f"Администратор {username} не найден")
+			return
+		self.config.set('global', 'admin_username', ','.join(old_list))
+		self.config['global']['admin_username'] = ','.join(old_list)
+		self.save()
+
+	def add_admin(self, username:str):
+		old_list = self.get_admin_username()
+		if username.replace("@", "") in old_list:	
+			logging.error(f"Администратор {username} уже существует")
+			return False
+		old_list.append(username.replace("@", ""))
+		self.config.set('global', 'admin_username', ','.join(old_list))
+		self.config['global']['admin_username'] = ','.join(old_list)
+		self.save()
+		return True
 
 	# SETTINGS - SET NEW VALUES TO FILE CONFIG
 
@@ -81,6 +127,14 @@ class Config:
 			if bot_name in ['global', 'cms_bot']:
 				continue
 			self.switch_status(bot_name)
+
+	def switch_counters_all_bots_ZERO(self):
+		for bot_name in self.get_list_bots():
+			if bot_name in ['global', 'cms_bot']:
+				continue
+			self.set_temp_count_updates(bot_name, 0)
+			self.set_temp_count_sent(bot_name, 0)
+			self.set_temp_count_errors(bot_name, 0)
 
 	def switch_status_all_bots_FALSE(self):
 		logging.info("Выключение рассылки всех ботов")
@@ -145,6 +199,21 @@ class Config:
 		old_dict[url_name] = id_last_message
 		self.config.set(bot_name, 'urls_channels', self.dict_to_str(old_dict))
 		self.config[bot_name]['urls_channels'] = self.dict_to_str(old_dict)
+		self.save()
+
+	def set_temp_count_updates(self, bot_name:str, count_updates:int):
+		self.config.set(bot_name, 'temp_count_updates', str(count_updates))
+		self.config[bot_name]['temp_count_updates'] = str(count_updates)
+		self.save()	
+	
+	def set_temp_count_sent(self, bot_name:str, count_sent:int):	
+		self.config.set(bot_name, 'temp_count_sent', str(count_sent))
+		self.config[bot_name]['temp_count_sent'] = str(count_sent)
+		self.save()
+	
+	def set_temp_count_errors(self, bot_name:str, count_errors:int):
+		self.config.set(bot_name, 'temp_count_errors', str(count_errors))
+		self.config[bot_name]['temp_count_errors'] = str(count_errors)
 		self.save()
 
 	def dict_to_str(self, dict_data:dict) -> str:

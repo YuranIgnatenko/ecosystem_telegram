@@ -11,3 +11,4 @@ _*
 services/_*
 logs/*
 test.py
+scripts/*
