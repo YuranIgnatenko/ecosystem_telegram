@@ -52,6 +52,8 @@ async def tab_updates(callback:types.CallbackQuery, info_status:str):
 			new_button(f"{status} {bot}", f"tab_updates_select_bot_{bot}"),
 			new_button(f"{string_process}", f"tab_updates_count_updates_{bot}"))
 
+	builder.row(new_button("🔄 Обновить контент в каналах", "tab_updates_send_updates"))
+
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))
 	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
@@ -80,3 +82,41 @@ async def tab_manage_admin(callback:types.CallbackQuery, info_status:str):
 	
 	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 
+
+
+
+
+async def tab_notifier(callback:types.CallbackQuery, info_status:str):
+	random_code = random.randint(1111, 9999)
+	info_status += f"	*code:{random_code}"
+	config = Config()
+	builder = InlineKeyboardBuilder()
+
+	builder.row(new_button("💬 Показать сохраненное письмо", "notifier_show_saved_messages"))
+	builder.row(new_button("📝 Создать новое письмо", "notifier_create_new_message"))
+	builder.row(new_button("⚙️ Выбрать бота для рассылки", "notifier_select_bot"))
+	builder.row(new_button("📬 Запустить рассылку", "notifier_start_sending"))
+	builder.row(new_button(info_status, "info_status"))
+	builder.row(*panel_menu_tabs())
+	
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
+
+
+async def tab_notifier_select_bot(callback:types.CallbackQuery, info_status:str):
+	random_code = random.randint(1111, 9999)
+	info_status += f"	*code:{random_code}"
+	config = Config()
+	builder = InlineKeyboardBuilder()
+
+	for bot in config.get_list_bots():
+		status_notifier_access = "🟢" if config.get_notifier_access(bot) else "🔴"
+		builder.row(
+			new_button(f"{status_notifier_access} {bot}", f"notifier_switch_access_bot_{bot}"))
+	
+	builder.row(new_button("⚠️ Использовать всех ботов", "notifier_switch_access_all_bots"))
+	builder.row(new_button("📬 Запустить рассылку", "notifier_start_sending"))
+	builder.row(new_button(info_status, "info_status_notifier"))
+	builder.row(*panel_menu_tabs())
+	
+	
+	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())

@@ -19,6 +19,7 @@ class CmsHandlers:
 		self.fetcher = FetcherImage()
 		self.message_id_textview = None
 		self.FLAG_WAIT_USERNAME_ADMIN = False
+		self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
@@ -36,6 +37,11 @@ class CmsHandlers:
 			else:
 				await message.answer(f"❌ Администратор {message.text} не добавлен")	
 
+		if self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY:
+			self.config.set_notifier_message_body(message.text)
+			self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
+			await message.answer(f"✅ Сообщение для рассылки сохранено")	
+
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
 
@@ -43,16 +49,16 @@ class CmsHandlers:
 			await callback.answer("🔒 У вас нет доступа к этому боту")
 			return
 
-		elif callback.data == "tab_updates":
+		if callback.data == "tab_updates":
+			await tabs.tab_updates(callback, "🔔 Обновление контента")
+
+		elif callback.data == "tab_updates_send_updates":
 			self.config.switch_status_all_bots_TRUE()
 			for bot in self.list_bots:
-				if bot in ['cms','global']:
-					continue
 				if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
 					await self.posting_telegram_scrapper(callback, bot)
 				elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER:
 					await self.posting_web_parser(callback, bot)
-				# await auto_posting.manage_auto_posting(callback)
 
 		elif callback.data == "tab_manage_admin":
 			await tabs.tab_manage_admin(callback, "👤 Управление администраторами")
@@ -64,10 +70,44 @@ class CmsHandlers:
 			await tabs.tab_manage_admin(callback, "👤 Управление администраторами")
 		
 		elif callback.data == "manage_admin_add_admin":
-			await callback.message.answer("Введите username администратора: @username_telegram_1234")
+			await self.bot.send_message(callback.from_user.id, "Введите username администратора: @username_telegram_1234")
 			self.FLAG_WAIT_USERNAME_ADMIN = True
 			await tabs.tab_manage_admin(callback, "👤 Добавление администратора")
+
+		elif callback.data == "tab_notifier":
+			await tabs.tab_notifier(callback, "🔔 Управление рассылкой уведомлений")
+
+		elif callback.data == "notifier_show_saved_messages":
+			await self.bot.send_message(callback.from_user.id, self.config.get_notifier_message_body())
+
+		elif callback.data == "notifier_create_new_message":
+			await self.bot.send_message(callback.from_user.id, "Введите текст письма: Mail: Здравствуйте! напоминаем о конкурсе по ссылке http://blablabla (используйте приставку 'Mail:')")
+			self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = True
+			await tabs.tab_notifier(callback, "🔔 Создание нового письма")
+
+		elif callback.data.startswith("notifier_select_bot"):
+			await tabs.tab_notifier_select_bot(callback, f"🔔 Выбор бота для рассылки уведомлений")
+
+		elif callback.data.startswith("notifier_switch_access_bot_"):
+			bot_name = callback.data.split("notifier_switch_access_bot_")[-1]
+			self.config.set_notifier_access(bot_name, not self.config.get_notifier_access(bot_name))
+			await tabs.tab_notifier_select_bot(callback, f"🔔 Рассылка уведомлений включена для бота {bot_name}")
+
+		elif callback.data == "notifier_switch_access_all_bots":
+			for bot in self.list_bots:
+				self.config.set_notifier_access(bot.bot_name, True)
+			await tabs.tab_notifier_select_bot(callback, "🔔 Рассылка уведомлений включена для всех ботов")
 		
+		elif callback.data == "notifier_start_sending":
+			for bot in self.list_bots:
+				temp_status = f"🚀 Рассылка запущена для бота {bot.bot_name}"
+				logging.info(temp_status)
+				await tabs.tab_notifier_select_bot(callback, temp_status)
+				await asyncio.sleep(1)
+				await self.bot.send_message(callback.from_user.id, temp_status)
+				if self.config.get_notifier_access(bot.bot_name):
+					print(f"Рассылка для бота {self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body()}")
+					await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body())
 
 	async def posting_telegram_scrapper(self, callback, bot):
 		logging.info(f"Рассылка бота {bot.bot_name}")
@@ -200,4 +240,10 @@ class CmsHandlers:
 			temp_status = f"❌ Бот {bot.bot_name} не активен"
 			logging.info(temp_status)
 			await tabs.tab_updates(callback, temp_status)
+
+	async def posting_notifier_start_sending(self, callback, bot):
+		temp_status = f"🔔 Уведомление отправляется для бота {bot.bot_name}"
+		logging.info(temp_status)
+		await bot.send_message(callback.from_user.id, self.config.get_notifier_message_body())
+
 

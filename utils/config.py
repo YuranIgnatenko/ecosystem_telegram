@@ -112,6 +112,24 @@ class Config:
 		self.save()
 		return True
 
+
+	def get_notifier_message_body(self) -> str:
+		return self.config['global']['notifier_message_body']
+
+	def set_notifier_message_body(self, message_body:str):
+		message_body = message_body.replace("Mail:", "").strip()
+		self.config.set('global', 'notifier_message_body', message_body)
+		self.config['global']['notifier_message_body'] = message_body
+		self.save()
+
+	def get_notifier_access(self, bot_name:str) -> bool:
+		return strtobool(self.config[bot_name]['notifier_access'])
+
+	def set_notifier_access(self, bot_name:str, status:bool):
+		self.config.set(bot_name, 'notifier_access', str(status))
+		self.config[bot_name]['notifier_access'] = str(status)
+		self.save()	
+
 	# SETTINGS - SET NEW VALUES TO FILE CONFIG
 
 	def switch_status(self, bot_name: str):
