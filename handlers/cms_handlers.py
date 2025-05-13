@@ -2,13 +2,39 @@ from keyboards.responses import answer_start
 from aiogram import types
 
 import asyncio, os
-from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER, resize_image, SIZE_MB_20
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
+from services.utils import TYPE_SERVICE_WEB_PARSER
+from services.utils import resize_image
+from services.utils import SIZE_MB_20
 from lib_fetcher_image.fetcher import FetcherImage
 from aiogram.types import FSInputFile
 import logging
-from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER,TYPE_SERVICE_WEB_PARSER
 
 from keyboards.cms import tabs
+
+class FlagStatesDict:
+	def __init__(self):
+		self.flag_states = {}
+
+	def get_wait_username_admin(self):
+		return self.flag_states.get("wait_username_admin", False)
+
+	def set_wait_username_admin(self, value):
+		self.flag_states["wait_username_admin"] = value
+
+	def get_wait_notifier_message_body(self):
+		return self.flag_states.get("wait_notifier_message_body", False)
+
+	def set_wait_notifier_message_body(self, value):
+		self.flag_states["wait_notifier_message_body"] = value
+	
+	def get_bot_name_edit(self):
+		return self.flag_states.get("bot_name_edit", None)
+
+	def set_bot_name_edit(self, value):
+		self.flag_states["bot_name_edit"] = value
+		
+
 
 class CmsHandlers:
 	def __init__(self, config, bot_name, bot, list_bots):
@@ -17,10 +43,9 @@ class CmsHandlers:
 		self.bot = bot
 		self.list_bots = list_bots
 		self.fetcher = FetcherImage()
-		self.message_id_textview = None
-		self.FLAG_WAIT_USERNAME_ADMIN = False
-		self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
-		self.FLAG_BOT_NAME_EDIT = None
+
+		self.FLAG_STATES_DICT = FlagStatesDict()
+
 		
 
 	async def start(self, message: types.Message):
@@ -31,17 +56,17 @@ class CmsHandlers:
 			await message.answer("🔒 У вас нет доступа к этому боту")
 
 	async def any_text_handler(self, message: types.Message):
-		if self.FLAG_WAIT_USERNAME_ADMIN:
+		if self.FLAG_STATES_DICT.get_wait_username_admin():
 			is_ok = self.config.add_admin(message.text)
 			if is_ok:
-				self.FLAG_WAIT_USERNAME_ADMIN = False
+				self.FLAG_STATES_DICT.set_wait_username_admin(False)
 				await message.answer(f"✅ Администратор {message.text} добавлен")	
 			else:
 				await message.answer(f"❌ Администратор {message.text} не добавлен")	
 
-		if self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY:
+		if self.FLAG_STATES_DICT.get_wait_notifier_message_body():
 			self.config.set_notifier_message_body(message.text)
-			self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = False
+			self.FLAG_STATES_DICT.set_wait_notifier_message_body(False)
 			await message.answer(f"✅ Сообщение для рассылки сохранено")	
 
 
@@ -68,13 +93,12 @@ class CmsHandlers:
 
 		elif callback.data.startswith("manage_admin_delete_admin_"):
 			username = callback.data.split("manage_admin_delete_admin_")[-1]
-			print(username, "delete admin", callback.data)
 			self.config.delete_admin(username)
 			await tabs.tab_manage_admin(callback, "👤 Управление администраторами")
 		
 		elif callback.data == "manage_admin_add_admin":
 			await self.bot.send_message(callback.from_user.id, "Введите username администратора: @username_telegram_1234")
-			self.FLAG_WAIT_USERNAME_ADMIN = True
+			self.FLAG_STATES_DICT.set_wait_username_admin(True)
 			await tabs.tab_manage_admin(callback, "👤 Добавление администратора")
 
 		elif callback.data == "tab_notifier":
@@ -85,7 +109,7 @@ class CmsHandlers:
 
 		elif callback.data == "notifier_create_new_message":
 			await self.bot.send_message(callback.from_user.id, "Введите текст письма: Mail: Здравствуйте! напоминаем о конкурсе по ссылке http://blablabla (используйте приставку 'Mail:')")
-			self.FLAG_WAIT_NOTIFIER_MESSAGE_BODY = True
+			self.FLAG_STATES_DICT.set_wait_notifier_message_body(True)
 			await tabs.tab_notifier(callback, "🔔 Создание нового письма")
 
 		elif callback.data.startswith("notifier_select_bot"):
@@ -179,7 +203,6 @@ class CmsHandlers:
 		counter_errors = 0
 		temp_status = "Ожидание ввода команды ..."	
 		if self.config.get_status(bot.bot_name):
-			print("counter_updates, counter_sent, counter_errors, temp_status", counter_updates, counter_sent, counter_errors, temp_status)
 			self.config.set_temp_count_updates(bot.bot_name, counter_updates)
 			self.config.set_temp_count_sent(bot.bot_name, counter_sent)
 			self.config.set_temp_count_errors(bot.bot_name, counter_errors)
