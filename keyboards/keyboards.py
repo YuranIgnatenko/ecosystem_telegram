@@ -4,6 +4,16 @@ from aiogram import types
 
 from utils.config import Config
 
+def new_button(text:str, callback_data:str):
+	return types.InlineKeyboardButton(
+		text=text, 
+		callback_data=callback_data)
+
+def back_button(callback_data:str):
+	return types.InlineKeyboardButton(
+		text="Назад", 
+		callback_data=callback_data)
+
 def list_bots():
 	config = Config()
 	builder = InlineKeyboardBuilder()

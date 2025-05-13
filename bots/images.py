@@ -11,7 +11,7 @@ from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile
 
-from keyboards import responses
+import handlers.bot_handlers
 from lib_fetcher_image.fetcher import FetcherImage
 from PIL import Image
 

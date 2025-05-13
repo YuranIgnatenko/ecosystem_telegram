@@ -1,16 +1,19 @@
-from keyboards.responses import answer_start
 from aiogram import types
 
 import asyncio, os
+
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 from services.utils import TYPE_SERVICE_WEB_PARSER
 from services.utils import resize_image
 from services.utils import SIZE_MB_20
+
+
 from lib_fetcher_image.fetcher import FetcherImage
 from aiogram.types import FSInputFile
 import logging
 
-from keyboards.cms import tabs
+from keyboards import tabs
+from handlers.cms_responses import Responses
 
 class FlagStatesDict:
 	def __init__(self):
@@ -35,6 +38,37 @@ class FlagStatesDict:
 		self.flag_states["bot_name_edit"] = value
 		
 
+class CounterProcessUpdates:
+	def __init__(self, config):
+		self.config = config
+		self.find = 0
+		self.sent = 0
+		self.errors = 0
+		self.bot_name = None
+
+	def set_bot_name(self, bot_name):
+		self.bot_name = bot_name
+
+	def set_updates(self, count):
+		self.find = count
+		self.config.set_temp_count_updates(self.bot_name, self.find)
+
+	def increment_errors(self):
+		self.errors += 1
+		self.config.set_temp_count_errors(self.bot_name, self.errors)
+	
+	def increment_sent(self):
+		self.sent += 1
+		self.config.set_temp_count_sent(self.bot_name, self.sent)
+		
+	def reset(self):
+		self.find = 0
+		self.sent = 0
+		self.errors = 0
+		self.config.set_temp_count_updates(self.bot_name, self.find)
+		self.config.set_temp_count_sent(self.bot_name, self.sent)
+		self.config.set_temp_count_errors(self.bot_name, self.errors)
+
 
 class CmsHandlers:
 	def __init__(self, config, bot_name, bot, list_bots):
@@ -45,8 +79,9 @@ class CmsHandlers:
 		self.fetcher = FetcherImage()
 
 		self.FLAG_STATES_DICT = FlagStatesDict()
-
-		
+		self.PREFIX_TEMP_FILE = "temp_file_"
+		self.responses = Responses()
+		self.counter_process_updates = CounterProcessUpdates(self.config)
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
@@ -68,7 +103,6 @@ class CmsHandlers:
 			self.config.set_notifier_message_body(message.text)
 			self.FLAG_STATES_DICT.set_wait_notifier_message_body(False)
 			await message.answer(f"✅ Сообщение для рассылки сохранено")	
-
 
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
@@ -127,154 +161,101 @@ class CmsHandlers:
 		
 		elif callback.data == "notifier_start_sending":
 			for bot in self.list_bots:
-				temp_status = f"🚀 Рассылка запущена для бота {bot.bot_name}"
-				logging.info(temp_status)
-				await tabs.tab_notifier_select_bot(callback, temp_status)
+				await self.responses.start_notifier_sending_loading(callback, bot.bot_name)
 				await asyncio.sleep(1)
-				# await self.bot.send_message(callback.from_user.id, temp_status)
 				if self.config.get_notifier_access(bot.bot_name):
-					# print(f"Рассылка для бота {self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body()}")
+					await self.responses.complete_notifier_sending_start(callback, bot.bot_name)
 					await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), self.config.get_notifier_message_body())
 
 		elif callback.data == "tab_reports":
 			await tabs.tab_reports(callback, "🔔 Отчеты")
 
-
-
 	async def posting_telegram_scrapper(self, callback, bot):
+		if not self.config.get_status(bot.bot_name):
+			return
 		logging.info(f"Рассылка бота {bot.bot_name}")
-		counter_updates = 0
-		counter_sent = 0
-		counter_errors = 0
-		temp_status = "Ожидание ввода команды ..."
-
+		self.counter_process_updates = CounterProcessUpdates(self.config)
+		self.counter_process_updates.set_bot_name(bot.bot_name)
+		await self.responses.start_find_updates(callback, bot.bot_name)
+		new_name_file = None
 		if self.config.get_status(bot.bot_name):
-			# print("counter_updates, counter_sent, counter_errors, temp_status", counter_updates, counter_sent, counter_errors, temp_status)
-			self.config.set_temp_count_updates(bot.bot_name, counter_updates)
-			self.config.set_temp_count_sent(bot.bot_name, counter_sent)
-			self.config.set_temp_count_errors(bot.bot_name, counter_errors)
-			await tabs.tab_updates(callback, temp_status)
-
+			self.counter_process_updates.reset()
 			content_list = await bot.service.get_last_messages(bot.bot_name)
 			if content_list:
-				temp_status =f"🔔 Найдено {len(content_list)} обновлений для бота {bot.bot_name}"
-				counter_updates = len(content_list)
-				self.config.set_temp_count_updates(bot.bot_name, counter_updates)
-				logging.info(temp_status)
+				await self.responses.complete_find_updates(callback, bot.bot_name, len(content_list))
+				self.counter_process_updates.set_updates(len(content_list))
 				for message in content_list:
-					await tabs.tab_updates(callback, temp_status)
+					#todo response await sending
 					if message.text:
-						if not self.config.get_status(bot.bot_name):
-							return
 						try:	
 							await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), message.text)
 							await asyncio.sleep(self.config.get_delay_seconds())
-							counter_sent += 1 
-							temp_status = f"✅ Отправлено {counter_sent} сообщений для бота {bot.bot_name}"
-							self.config.set_temp_count_sent(bot.bot_name, counter_sent)
-							await tabs.tab_updates(callback, temp_status)
+							self.counter_process_updates.increment_sent()
+							await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
 						except Exception as e:
-							temp_status = f"⚠️ Ошибка при отправке сообщения: {e} для бота {bot.bot_name}"
-							logging.error(temp_status)
-							self.config.switch_status(bot.bot_name)
-							counter_errors += 1
-							self.config.set_temp_count_errors(bot.bot_name, counter_errors)
-							await tabs.tab_updates(callback, temp_status)
-
+							self.counter_process_updates.increment_errors()
+							await self.responses.error_send_file(callback, bot.bot_name, e, new_name_file)
+							# self.config.switch_status(bot.bot_name)
 				self.config.switch_status(bot.bot_name)
-				temp_status = f"✅ Рассылка завершена для бота {bot.bot_name}"
-				logging.info(temp_status)
-				await tabs.tab_updates(callback, temp_status)
-
+				# todo response answer - completed posting
 			else:
-				temp_status = f"☑️ Обновления не найдены для бота {bot.bot_name}"
-				logging.info(temp_status)
-				await tabs.tab_updates(callback, temp_status)
+				await self.responses.not_found_updates(callback, bot.bot_name)
 				self.config.switch_status(bot.bot_name)
 		else:
-			temp_status = f"❌ Бот {bot.bot_name} не активен"
-			logging.info(temp_status)
-			await tabs.tab_updates(callback, temp_status)
+			await self.responses.not_active_bot(callback, bot.bot_name)
 		
 	async def posting_web_parser(self, callback, bot):
+		if not self.config.get_status(bot.bot_name):
+			return
 		logging.info(f"Рассылка бота {bot.bot_name}")
-		counter_updates = 0
-		counter_sent = 0
-		counter_errors = 0
-		temp_status = "Ожидание ввода команды ..."	
+		self.counter_process_updates = CounterProcessUpdates(self.config)
+		self.counter_process_updates.set_bot_name(bot.bot_name)
 		if self.config.get_status(bot.bot_name):
-			self.config.set_temp_count_updates(bot.bot_name, counter_updates)
-			self.config.set_temp_count_sent(bot.bot_name, counter_sent)
-			self.config.set_temp_count_errors(bot.bot_name, counter_errors)
-
-			temp_status = f"🌐 Поиск обновлений для бота {bot.bot_name}"
-			logging.info(temp_status)
-			await tabs.tab_updates(callback, temp_status)
+			self.counter_process_updates.reset()	
+			await self.responses.start_find_updates(callback, bot.bot_name)
 			try:
 				files_list = await bot.service.get_random_files()
 			except Exception as e:
-				temp_status = f"❌ Ошибка при получении файлов для бота {bot.bot_name}: {e}"	
-				counter_errors += 1
-				self.config.set_temp_count_errors(bot.bot_name, counter_errors)
-				logging.error(temp_status)
-				await tabs.tab_updates(callback, temp_status)
+				self.counter_process_updates.increment_errors()
+				await self.responses.error_find_updates(callback, bot.bot_name)
 				return
 			if files_list:
-				temp_status = f"🔔 Найдено {len(files_list)} файлов для бота {bot.bot_name}"
-				counter_updates = len(files_list)
-				self.config.set_temp_count_updates(bot.bot_name, counter_updates)	
-				logging.info(temp_status)
-				await tabs.tab_updates(callback, temp_status)
+				self.counter_process_updates.set_updates(len(files_list))
+				await self.responses.complete_find_updates(callback, bot.bot_name, files_list)
 				for file in files_list:
-					await tabs.tab_updates(callback, temp_status)
-					new_name_file = f"{bot.bot_name}_{file.split('/')[-1]}"
+					new_name_file = f"{self.PREFIX_TEMP_FILE}{bot.bot_name}_{file.split('/')[-1]}"
 					try:
 						is_ok = self.fetcher.download(file, new_name_file)
 						await asyncio.sleep(1)
 						if not is_ok:
-							temp_status = f"⚠️ Ошибка при скачивании файла: {file} для бота {bot.bot_name}"
-							counter_errors += 1
-							self.config.set_temp_count_errors(bot.bot_name, counter_errors)	
-							logging.error(temp_status)
-							await tabs.tab_updates(callback, temp_status)
+							self.counter_process_updates.increment_errors()
+							await self.responses.error_download_file(callback, bot.bot_name, file)
 							continue
 						else:
 							if os.path.getsize(new_name_file) > SIZE_MB_20:
 								compress_image(new_name_file)
 							await bot.bot.send_photo(self.config.get_channel_chat_id(bot.bot_name), photo=FSInputFile(new_name_file))
 							await asyncio.sleep(self.config.get_delay_seconds())
-							counter_sent += 1
-							temp_status = f"✅ Отправлено {counter_sent} файлов для бота {bot.bot_name}"
-							self.config.set_temp_count_sent(bot.bot_name, counter_sent)
-							await tabs.tab_updates(callback, temp_status)
-
-						os.remove(new_name_file)
+							self.counter_process_updates.increment_sent()
+							await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
 					except Exception as e:
-						temp_status = f"⚠️ Ошибка при отправке сообщения: {e}, file: {new_name_file} в боте {bot.bot_name}"
-						logging.error(temp_status)
-						counter_errors += 1
-						self.config.set_temp_count_errors(bot.bot_name, counter_errors)	
-						await tabs.tab_updates(callback, temp_status)
+						self.counter_process_updates.increment_errors()
+						await self.responses.error_send_file(callback, bot.bot_name, e, new_name_file)
 						continue
+					finally:
+						if os.path.exists(new_name_file):
+							os.remove(new_name_file)
 				self.config.switch_status(bot.bot_name)
-				temp_status = f"✅ Рассылка завершена для бота {bot.bot_name}"
-				logging.info(temp_status)
-				await tabs.tab_updates(callback, temp_status)
-				# await responses.answer_panel_bot(callback, bot.bot_name)
+				await self.responses.complete_notifier_sending(callback, bot.bot_name)
 			else:
-				temp_status = f"☑️ Обновления не найдены для бота {bot.bot_name}"
-				logging.info(temp_status)
-				await tabs.tab_updates(callback, temp_status)
+				await self.responses.not_found_updates(callback, bot.bot_name)
 				self.config.switch_status(bot.bot_name)
-				# await responses.answer_panel_bot(callback, bot.bot_name)
 		else:
-			temp_status = f"❌ Бот {bot.bot_name} не активен"
-			logging.info(temp_status)
-			await tabs.tab_updates(callback, temp_status)
+			await self.responses.not_active_bot(callback, bot.bot_name)
 
 	async def posting_notifier_start_sending(self, callback, bot):
+		if not self.config.get_status(bot.bot_name):
+			return
 		temp_status = f"🔔 Уведомление отправляется для бота {bot.bot_name}"
 		logging.info(temp_status)
 		await bot.send_message(callback.from_user.id, self.config.get_notifier_message_body())
-
-

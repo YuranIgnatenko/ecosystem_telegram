@@ -7,8 +7,6 @@ from aiogram.filters.command import Command
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile
-
-from keyboards import responses
 import datetime
 
 from handlers.bot_handlers import BotHandlers

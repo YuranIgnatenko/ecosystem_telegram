@@ -20,4 +20,3 @@ def setup_logger():
 			encoding='utf-8',
 		)
 		return logging.getLogger(__name__)
-

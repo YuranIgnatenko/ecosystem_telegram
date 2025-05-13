@@ -44,7 +44,7 @@ memes_bot = meme.MemesBot(config, memes_service, session)
 list_bots = [works_bot, news_bot, books_bot, images_bot, memes_bot]
 
 cms_bot = cms.CmsBot(config, list_bots, session)
-scheduler_posting = ShedulerPostingService(config, list_bots)
+# scheduler_posting = ShedulerPostingService(config, list_bots)
 
 async def main():
 	logging.info("Запуск экосистемы")
@@ -54,7 +54,7 @@ async def main():
 	config.switch_counters_all_bots_ZERO()
 
 	await asyncio.gather(
-		scheduler_posting.launch(),
+		# scheduler_posting.launch(),
 		images_bot.launch(),
 		works_bot.launch(),
 		news_bot.launch(),

@@ -7,18 +7,17 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import Message
 from utils.config import Config
-from keyboards import responses
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters.command import Command
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile
-from keyboards import responses
+from handlers import cms_responses
 from utils.config import Config
 
 from handlers.cms_handlers import CmsHandlers
-from keyboards.cms import tabs
+from keyboards import tabs
 import logging
 
 class CmsBot:

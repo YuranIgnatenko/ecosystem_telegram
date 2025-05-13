@@ -18,13 +18,39 @@ class Config:
 	# SECTION - BOT
 
 	def get_temp_count_updates(self, bot_name:str) -> int:
-		return int(self.config[bot_name]['temp_count_updates'])
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		return int(config[bot_name]['temp_count_updates'])
 
 	def get_temp_count_sent(self, bot_name:str) -> int:
-		return int(self.config[bot_name]['temp_count_sent'])
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		return int(config[bot_name]['temp_count_sent'])
 
 	def get_temp_count_errors(self, bot_name:str) -> int:
-		return int(self.config[bot_name]['temp_count_errors'])	
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		return int(config[bot_name]['temp_count_errors'])	
+
+	def set_temp_count_updates(self, bot_name:str, count_updates:int):
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		config[bot_name]['temp_count_updates'] = str(count_updates)
+		config.write(open('config.ini', 'w', encoding='cp1251'))
+
+	def set_temp_count_sent(self, bot_name:str, count_sent:int):
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		config[bot_name]['temp_count_sent'] = str(count_sent)
+		config.write(open('config.ini', 'w', encoding='cp1251'))
+
+	def set_temp_count_errors(self, bot_name:str, count_errors:int):
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+		config[bot_name]['temp_count_errors'] = str(count_errors)
+		config.write(open('config.ini', 'w', encoding='cp1251'))
+
+
 
 	def get_time_last_started(self, bot_name:str) -> str:
 		temp  = self.config[bot_name]['time_last_started']	

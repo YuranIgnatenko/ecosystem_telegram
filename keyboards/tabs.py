@@ -6,10 +6,7 @@ import asyncio
 import random
 
 from utils.config import Config
-from keyboards.cms.utils import new_button, back_button
-from textview.model import TextViewModel
-
-textview = TextViewModel(Config())
+from keyboards.keyboards import new_button, back_button
 
 async def start(message:types.Message) -> int:
 
@@ -17,7 +14,7 @@ async def start(message:types.Message) -> int:
 	builder = InlineKeyboardBuilder()
 	builder.row(*panel_menu_tabs())
 
-	builder.row(new_button(textview.waiting_command(), "textview_waiting_command"))
+	builder.row(new_button("waiting command", "waiting_command"))
 
 	await message.answer(text="Панель управления платформой 'Ecosystem'", reply_markup=builder.as_markup())
 

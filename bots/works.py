@@ -8,7 +8,6 @@ from aiogram.filters.command import Command
 from aiogram.types import Message
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import FSInputFile
-from keyboards import responses
 from utils.config import Config
 
 from handlers.bot_handlers import BotHandlers
