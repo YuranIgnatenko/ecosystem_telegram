@@ -7,8 +7,8 @@ config.ini
 *.mkv
 
 *.session
+*.session.*
 _*
-services/_*
 logs/*
 test.py
 scripts/*

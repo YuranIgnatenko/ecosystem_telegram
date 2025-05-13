@@ -111,7 +111,7 @@ async def tab_notifier_select_bot(callback:types.CallbackQuery, info_status:str)
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status_notifier"))	
 	
-	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 
 
 async def tab_manage_bots(callback:types.CallbackQuery, info_status:str):
@@ -127,7 +127,7 @@ async def tab_manage_bots(callback:types.CallbackQuery, info_status:str):
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))
 
-	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 
 
 async def tab_manage_bots_select_bot(callback:types.CallbackQuery, info_status:str, bot_name:str):
@@ -148,7 +148,7 @@ async def tab_manage_bots_select_bot(callback:types.CallbackQuery, info_status:s
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))
 
-	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 
 
 async def tab_manage_settings(callback:types.CallbackQuery, info_status:str):
@@ -171,7 +171,7 @@ async def tab_manage_settings(callback:types.CallbackQuery, info_status:str):
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))
 
-	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 
 async def tab_reports(callback:types.CallbackQuery, info_status:str):
 	random_code = random.randint(1111, 9999)
@@ -189,6 +189,6 @@ async def tab_reports(callback:types.CallbackQuery, info_status:str):
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))
 
-	await callback.message.edit_reply_markup(text=f"*code:{random_code}", reply_markup=builder.as_markup())
+	await callback.message.edit_reply_markup(text=f"	*code:{random_code}", reply_markup=builder.as_markup())
 	
 	
