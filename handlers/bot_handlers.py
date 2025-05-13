@@ -8,7 +8,7 @@ from aiogram.types import FSInputFile
 import logging
 
 
-class CommandHandlers:
+class BotHandlers:
 	def __init__(self, config, bot_name, bot, service):
 		self.config = config	
 		self.bot_name = bot_name

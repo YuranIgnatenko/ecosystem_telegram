@@ -1,6 +1,6 @@
-import utils.config as config
 import asyncio
 import schedule
+import logging
 from datetime import datetime
 
 from bots import images
@@ -10,15 +10,14 @@ from bots import works
 from bots import meme
 from bots import cms
 
+import utils.config as config
+from utils.logger import setup_logger
+
 from services.telegram_scrapper_services import TelegramScrapperService
 from services.parser_images_service import ParserImagesService
 from services.parser_memes_service import ParserMemesService
 
-from utils.logger import setup_logger
-import logging
-
 from aiogram.client.session.aiohttp import AiohttpSession
-
 from fp.fp import FreeProxy
 
 
