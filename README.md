@@ -86,3 +86,10 @@ urls_channels = https://t.me/channel_url_1::0,
 python main.py
 ```
 
+## Demo cms panel
+
+![](demo_screen/screen_cms.png)
+
+## Demo bot control panel
+
+![](demo_screen/screen_bot.png)
