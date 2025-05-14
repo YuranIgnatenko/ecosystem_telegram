@@ -88,8 +88,8 @@ python main.py
 
 ## Demo cms panel
 
-![](/demo_screen/screen_cms.png)
+![screen cms](/demo_screen/screen_cms.png)
 
 ## Demo bot control panel
 
-![](/demo_screen/screen_bot.png)
+![screen bot](/demo_screen/screen_bot.png)
