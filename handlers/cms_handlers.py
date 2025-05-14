@@ -1,5 +1,5 @@
 from aiogram import types
-
+import telethon
 import asyncio, os
 
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
@@ -171,13 +171,13 @@ class CmsHandlers:
 			await tabs.tab_reports(callback, "🔔 Отчеты")
 
 	async def posting_telegram_scrapper(self, callback, bot):
+		self.config.drop_finding_updates(10)
 		if not self.config.get_status(bot.bot_name):
 			return
 		logging.info(f"Рассылка бота {bot.bot_name}")
 		self.counter_process_updates = CounterProcessUpdates(self.config)
 		self.counter_process_updates.set_bot_name(bot.bot_name)
 		await self.responses.start_find_updates(callback, bot.bot_name)
-		new_name_file = None
 		if self.config.get_status(bot.bot_name):
 			self.counter_process_updates.reset()
 			content_list = await bot.service.get_last_messages(bot.bot_name)
@@ -186,16 +186,43 @@ class CmsHandlers:
 				self.counter_process_updates.set_updates(len(content_list))
 				for message in content_list:
 					#todo response await sending
-					if message.text:
-						try:	
-							await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), message.text)
-							await asyncio.sleep(self.config.get_delay_seconds())
-							self.counter_process_updates.increment_sent()
+					temp_file_photo = "temp_file_photo"
+					try:	
+						if message.media:
+							if isinstance(message.media, telethon.types.MessageMediaPhoto):
+								temp_file_photo = await bot.service.scrapper.client.download_media(message.media)
+								await bot.bot.send_photo(self.config.get_channel_chat_id(bot.bot_name), photo=FSInputFile(temp_file_photo))
+								await asyncio.sleep(self.config.get_delay_seconds())
+								self.counter_process_updates.increment_sent()
+								await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
+								if message.text:
+									await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), message.text)
+									await asyncio.sleep(self.config.get_delay_seconds())
+									await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
+							# elif isinstance(message.media, telethon.types.MessageMediaDocument):
+							# 	document = await bot.service.scrapper.client.download_media(message.media)
+							# 	await bot.bot.send_document(self.config.get_channel_chat_id(bot.bot_name), document=FSInputFile(document))
+							# 	await asyncio.sleep(self.config.get_delay_seconds())
+							# 	self.counter_process_updates.increment_sent()
+							# 	await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
+							else:
+								print(message.media,"media", "unrecognized type", type(message.media))
+						else:
+							if message.text:
+								await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), message.text)
+								await asyncio.sleep(self.config.get_delay_seconds())
+								self.counter_process_updates.increment_sent()
 							await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
-						except Exception as e:
-							self.counter_process_updates.increment_errors()
-							await self.responses.error_send_file(callback, bot.bot_name, e, new_name_file)
-							# self.config.switch_status(bot.bot_name)
+							print(message.media,"media")
+
+					except Exception as e:
+						self.counter_process_updates.increment_errors()
+						await self.responses.error_send_file(callback, bot.bot_name, e, temp_file_photo)
+						print(e, "error")
+						# self.config.switch_status(bot.bot_name)
+					finally:
+						if os.path.exists(temp_file_photo):
+							os.remove(temp_file_photo)
 				self.config.switch_status(bot.bot_name)
 				# todo response answer - completed posting
 			else:

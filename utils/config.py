@@ -238,6 +238,15 @@ class Config:
 		self.config['global']['count_posting_memes'] = str(new_value)
 		self.save()
 
+	def drop_finding_updates(self, count_updates:int=10):
+		for bot_name in self.get_list_bots():
+			if bot_name in ['news_bot']:	
+				old_dict = self.get_urls_channels(bot_name)	
+				for url_name, url_id in old_dict.items():
+					self.set_id_last_message(bot_name, url_name, int(url_id) - count_updates)
+		self.save()
+
+
 	def set_id_last_message(self, bot_name:str, url_name:str, id_last_message:int):
 		old_dict = self.get_urls_channels(bot_name)	
 		old_dict[url_name] = id_last_message
