@@ -20,6 +20,8 @@ class TelegramScrapperService:
 				for message in message_list:
 					if int(message.id) <= int(url_id):
 						break
+					if message.media:
+						results.append(message)
 					if message.text:
 						if is_first_message:
 							self.config.set_id_last_message(bot_name, url_name, message.id)
