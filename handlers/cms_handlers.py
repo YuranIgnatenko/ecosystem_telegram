@@ -206,19 +206,18 @@ class CmsHandlers:
 							# 	self.counter_process_updates.increment_sent()
 							# 	await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
 							else:
-								print(message.media,"media", "unrecognized type", type(message.media))
+								self.counter_process_updates.increment_errors()
+								await self.responses.error_send_file(callback, bot.bot_name, e, temp_file_photo)
 						else:
 							if message.text:
 								await bot.bot.send_message(self.config.get_channel_chat_id(bot.bot_name), message.text)
 								await asyncio.sleep(self.config.get_delay_seconds())
 								self.counter_process_updates.increment_sent()
 							await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
-							print(message.media,"media")
 
 					except Exception as e:
 						self.counter_process_updates.increment_errors()
 						await self.responses.error_send_file(callback, bot.bot_name, e, temp_file_photo)
-						print(e, "error")
 						# self.config.switch_status(bot.bot_name)
 					finally:
 						if os.path.exists(temp_file_photo):

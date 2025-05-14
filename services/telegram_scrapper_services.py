@@ -2,6 +2,7 @@ from lib_telegram_scrap.scrapper import Scraper
 import asyncio
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 import logging
+import re
 
 class TelegramScrapperService:
 	def __init__(self, config):
@@ -21,12 +22,19 @@ class TelegramScrapperService:
 					if int(message.id) <= int(url_id):
 						break
 					if message:
+						if message.text:
+							text = self.validate_message_text(message.text)
+							message.text = text
 						if is_first_message:
 							self.config.set_id_last_message(bot_name, url_name, message.id)
 							is_first_message = False
 						results.append(message)
 		return results
 	
+	def validate_message_text(self, text:str):
+		output = re.sub('http://\S+|https://\S+', '', text)
+		return output
+
 	async def close(self):
 		await self.scrapper.close()	
 
