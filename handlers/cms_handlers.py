@@ -207,6 +207,7 @@ class CmsHandlers:
 							# 	await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
 							else:
 								self.counter_process_updates.increment_errors()
+								e = f"error type:{type(message.media)}"
 								await self.responses.error_send_file(callback, bot.bot_name, e, temp_file_photo)
 						else:
 							if message.text:

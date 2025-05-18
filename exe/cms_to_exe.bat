@@ -1,0 +1,1 @@
+pyinstaller --onefile --noconsole cms.py
