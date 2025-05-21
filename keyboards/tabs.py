@@ -180,7 +180,13 @@ async def tab_reports(callback:types.CallbackQuery, info_status:str):
 	# builder.row(new_button("🔄 Обновлений", f"reports_history_updates"))
 	# builder.row(new_button("📤 Уведомлений", f"reports_history_notify"))
 	builder.row(new_button("📝 Логи читать последнии 20", f"reports_history_logs"))
-	builder.row(new_button("📝 Логи получить весь файл", f"reports_history_logs_file"))
+	builder.row(new_button("📝 Логи файл", f"reports_history_logs_file"))
+
+	builder.row(new_button("📝 Администраторы файл", f"reports_admins_file"))
+	builder.row(new_button("📝 Доступ к уведомлениям файл", f"reports_notifier_file"))
+	builder.row(new_button("📝 Токены и каналы файл", f"reports_tokens_channels_file"))
+
+	builder.row(new_button("📝 Конфиг файл", f"reports_config_file"))
 	# builder.row(new_button("⚠️ Ошибки", f"reports_history_errors"))
 	# builder.row(new_button("📊 Статистика", f"reports_history_statistics"))
 

@@ -5,7 +5,8 @@ import logging
 class Config:
 	def __init__(self):
 		self.config = configparser.ConfigParser()
-		self.config.read('config.ini', encoding='cp1251')
+		self.namefile = 'config.ini'
+		self.config.read(self.namefile, encoding='cp1251')
 
 	def get_list_bots(self) -> list:
 		temp = []

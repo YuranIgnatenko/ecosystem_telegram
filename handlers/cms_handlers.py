@@ -186,7 +186,16 @@ class CmsHandlers:
 				data_logs = f"{"\n\n".join(file.read().split("\n")[0-COUNT:])}"
 			# await callback.message.answer(data_logs)
 			await callback.message.answer_document(FSInputFile(OUTPUT_LOG_FILE))
-			await tabs.tab_reports(callback, "🔔 Логи последнии 20")
+			await tabs.tab_reports(callback, "🔔 Логи скачать")
+			
+		elif callback.data == "reports_config_file":
+			# data_logs = "none"
+			with open(self.config.namefile, "r", encoding='utf-8') as file:
+				data_logs = f"{file.read()}"
+			# await callback.message.answer(data_logs)
+			await callback.message.answer_document(FSInputFile(OUTPUT_LOG_FILE))
+			await tabs.tab_reports(callback, "🔔 Логи скачать")
+
 
 	async def posting_telegram_scrapper(self, callback, bot):
 		self.config.drop_finding_updates(10)
