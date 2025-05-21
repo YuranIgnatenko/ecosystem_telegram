@@ -130,7 +130,7 @@ async def tab_manage_bots(callback:types.CallbackQuery, info_status:str):
 async def tab_manage_bots_select_bot(callback:types.CallbackQuery, info_status:str, bot_name:str):
 	random_code = random.randint(1111, 9999)
 	info_status += f"	*code:{random_code}"
-	config = Config()
+	# config = Config()
 	builder = InlineKeyboardBuilder()
 
 	builder.row(new_button("🔄 Статус", f"manage_bots_select_bot_edit_status_{bot_name}"))
@@ -151,7 +151,7 @@ async def tab_manage_bots_select_bot(callback:types.CallbackQuery, info_status:s
 async def tab_manage_settings(callback:types.CallbackQuery, info_status:str):
 	random_code = random.randint(1111, 9999)
 	info_status += f"	*code:{random_code}"
-	config = Config()
+	# config = Config()
 	builder = InlineKeyboardBuilder()
 
 	builder.row(new_button("⚠️ Токен бота CMS", f"manage_settings_edit_token_cms_bot"))
@@ -173,15 +173,16 @@ async def tab_manage_settings(callback:types.CallbackQuery, info_status:str):
 async def tab_reports(callback:types.CallbackQuery, info_status:str):
 	random_code = random.randint(1111, 9999)
 	info_status += f"	*code:{random_code}"
-	config = Config()
+	# config = Config()
 	builder = InlineKeyboardBuilder()	
 	
-	builder.row(new_button("🕑 Расписание автопостинга", f"reports_history_schedule_posting"))
-	builder.row(new_button("🔄 Обновлений", f"reports_history_updates"))
-	builder.row(new_button("📤 Уведомлений", f"reports_history_notify"))
-	builder.row(new_button("📝 Логи", f"reports_history_logs"))
-	builder.row(new_button("⚠️ Ошибки", f"reports_history_errors"))
-	builder.row(new_button("📊 Статистика", f"reports_history_statistics"))
+	# builder.row(new_button("🕑 Расписание автопостинга", f"reports_history_schedule_posting"))
+	# builder.row(new_button("🔄 Обновлений", f"reports_history_updates"))
+	# builder.row(new_button("📤 Уведомлений", f"reports_history_notify"))
+	builder.row(new_button("📝 Логи читать последнии 20", f"reports_history_logs"))
+	builder.row(new_button("📝 Логи получить весь файл", f"reports_history_logs_file"))
+	# builder.row(new_button("⚠️ Ошибки", f"reports_history_errors"))
+	# builder.row(new_button("📊 Статистика", f"reports_history_statistics"))
 
 	builder.row(*panel_menu_tabs())
 	builder.row(new_button(info_status, "info_status"))

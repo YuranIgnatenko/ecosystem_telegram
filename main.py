@@ -1,7 +1,7 @@
 import asyncio
-import schedule
+# import schedule
 import logging
-from datetime import datetime
+# from datetime import datetime
 
 from bots import images
 from bots import books
@@ -16,10 +16,10 @@ from utils.logger import setup_logger
 from services.telegram_scrapper_services import TelegramScrapperService
 from services.parser_images_service import ParserImagesService
 from services.parser_memes_service import ParserMemesService
-from services.scheduler_posting_service import ShedulerPostingService
+# from services.scheduler_posting_service import ShedulerPostingService
 
 from aiogram.client.session.aiohttp import AiohttpSession
-from fp.fp import FreeProxy
+# from fp.fp import FreeProxy
 
 
 # selected if using server anywherepython

@@ -9,11 +9,12 @@ from services.utils import SIZE_MB_20
 
 
 from lib_fetcher_image.fetcher import FetcherImage
-from aiogram.types import FSInputFile
+from aiogram.types import FSInputFile, InputFileUnion
 import logging
 
 from keyboards import tabs
 from handlers.cms_responses import Responses
+from utils.logger import OUTPUT_LOG_FILE
 
 class FlagStatesDict:
 	def __init__(self):
@@ -169,6 +170,23 @@ class CmsHandlers:
 
 		elif callback.data == "tab_reports":
 			await tabs.tab_reports(callback, "🔔 Отчеты")
+		
+		elif callback.data == "reports_history_logs":
+			data_logs = "none"
+			with open(OUTPUT_LOG_FILE, "r", encoding='utf-8') as file:
+				COUNT = 20
+				data_logs = f"{"\n\n".join(file.read().split("\n")[0-COUNT:])}"
+			await callback.message.answer(data_logs)
+			await tabs.tab_reports(callback, "🔔 Логи последнии 20")
+			
+		elif callback.data == "reports_history_logs_file":
+			# data_logs = "none"
+			with open(OUTPUT_LOG_FILE, "r", encoding='utf-8') as file:
+				COUNT = 20
+				data_logs = f"{"\n\n".join(file.read().split("\n")[0-COUNT:])}"
+			# await callback.message.answer(data_logs)
+			await callback.message.answer_document(FSInputFile(OUTPUT_LOG_FILE))
+			await tabs.tab_reports(callback, "🔔 Логи последнии 20")
 
 	async def posting_telegram_scrapper(self, callback, bot):
 		self.config.drop_finding_updates(10)
