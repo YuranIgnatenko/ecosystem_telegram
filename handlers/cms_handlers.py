@@ -180,21 +180,25 @@ class CmsHandlers:
 			await tabs.tab_reports(callback, "🔔 Логи последнии 20")
 			
 		elif callback.data == "reports_history_logs_file":
-			# data_logs = "none"
-			with open(OUTPUT_LOG_FILE, "r", encoding='utf-8') as file:
-				COUNT = 20
-				data_logs = f"{"\n\n".join(file.read().split("\n")[0-COUNT:])}"
-			# await callback.message.answer(data_logs)
 			await callback.message.answer_document(FSInputFile(OUTPUT_LOG_FILE))
 			await tabs.tab_reports(callback, "🔔 Логи скачать")
 			
-		elif callback.data == "reports_config_file":
-			# data_logs = "none"
+		elif callback.data == "reports_config":
 			with open(self.config.namefile, "r", encoding='utf-8') as file:
 				data_logs = f"{file.read()}"
-			# await callback.message.answer(data_logs)
-			await callback.message.answer_document(FSInputFile(OUTPUT_LOG_FILE))
-			await tabs.tab_reports(callback, "🔔 Логи скачать")
+			await callback.message.answer(data_logs)
+			await tabs.tab_reports(callback, "🔔 Конфиг читать")
+
+		elif callback.data == "reports_config_file":
+			await callback.message.answer_document(FSInputFile(self.config.namefile))
+			await tabs.tab_reports(callback, "🔔 Статистика скачать")
+
+		elif callback.data == "reports_config":
+			with open(self.config.namefile, "r", encoding='utf-8') as file:
+				data_logs = f"{file.read()}"
+			await callback.message.answer(data_logs)
+			await tabs.tab_reports(callback, "🔔 Статистика читать")		
+
 
 
 	async def posting_telegram_scrapper(self, callback, bot):
