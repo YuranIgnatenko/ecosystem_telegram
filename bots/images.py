@@ -1,19 +1,7 @@
-import aiogram
+# bots/images.py
 
-import datetime
-import asyncio
-import logging
-import io
-
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command
-from aiogram.types import Message
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import FSInputFile
-
-import handlers.bot_handlers
-from lib_fetcher_image.fetcher import FetcherImage
-from PIL import Image
 
 from handlers.bot_handlers import BotHandlers
 import logging

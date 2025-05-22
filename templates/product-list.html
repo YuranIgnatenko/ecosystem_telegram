@@ -5,6 +5,23 @@
 	<meta charset="utf-8">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<title>Product List | Nalika - Material Admin Template</title>
+
+	<script>
+		function fetch_and_update(path) {
+			fetch(path);
+			location.reload();
+		}
+		function click_play_global() { fetch_and_update("/click_play_global") }
+		function click_stop_global() { fetch_and_update("/click_stop_global") }
+		function click_refresh_global() { fetch_and_update("/click_refresh_global") }
+		function click_send_mail_global() { fetch_and_update("/click_send_mail_gloval") }
+
+		function click_play() { fetch_and_update("/product-edit") }
+		function click_stop() { fetch_and_update("/product-edit") }
+		function click_refresh() { fetch_and_update("/product-edit") }
+		function click_send_mail() { fetch_and_update("/product-edit") }
+	</script>
+
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- favicon
@@ -1170,15 +1187,19 @@
 									<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 										<div class="breadcomb-report">
 											<button data-toggle="tooltip" title="Start" class="pd-setting-ed"><i
-													class="fa fa-play" aria-hidden="true"></i></button>
+													class="fa fa-play" aria-hidden="true"
+													onclick="click_play_global()"></i></button>
 											<button data-toggle="tooltip" title="Stop" class="pd-setting-ed"><i
-													class="fa fa-stop" aria-hidden="true"></i></button>
+													class="fa fa-stop" aria-hidden="true"
+													onclick="click_stop_global()"></i></button>
 											<button data-toggle="tooltip" title="Refresh" class="pd-setting-ed"><i
-													class="fa fa-refresh" aria-hidden="true"></i></button>
+													class="fa fa-refresh" aria-hidden="true"
+													onclick="click_refresh_global()"></i></button>
 											<button data-toggle="tooltip" title="Send mail" class="pd-setting-ed"><i
-													class="fa fa-send" aria-hidden="true"></i></button>
-											<button data-toggle="tooltip" data-placement="left" title="Download Report"
-												class="btn"><i class="icon nalika-download"></i></button>
+													class="fa fa-send" aria-hidden="true"
+													onclick="click_send_mail_global()"></i></button>
+											<!-- <button data-toggle="tooltip" data-placement="left" title="Download Report"
+												class="btn"><i class="icon nalika-download" onclick="click__global()"></i></button> -->
 										</div>
 									</div>
 								</div>
@@ -1231,13 +1252,17 @@
 
 									<td>
 										<button data-toggle="tooltip" title="Start" class="pd-setting-ed"><i
-												class="fa fa-play" aria-hidden="true"></i></button>
+												class="fa fa-play" aria-hidden="true"
+												onclick="click_play()"></i></button>
 										<button data-toggle="tooltip" title="Stop" class="pd-setting-ed"><i
-												class="fa fa-stop" aria-hidden="true"></i></button>
+												class="fa fa-stop" aria-hidden="true"
+												onclick="click_stop()"></i></button>
 										<button data-toggle="tooltip" title="Refresh" class="pd-setting-ed"><i
-												class="fa fa-refresh" aria-hidden="true"></i></button>
+												class="fa fa-refresh" aria-hidden="true"
+												onclick="click_refresh()"></i></button>
 										<button data-toggle="tooltip" title="Send mail" class="pd-setting-ed"><i
-												class="fa fa-send" aria-hidden="true"></i></button>
+												class="fa fa-send" aria-hidden="true"
+												onclick="send_mail()"></i></button>
 									</td>
 									<td>
 										<button data-toggle="tooltip" title="Edit" class="pd-setting-ed"><i

@@ -1,9 +1,24 @@
-from flask import Flask, render_template
+# web_app/app.py
+
+from flask import Flask, render_template, redirect
+import asyncio
+import _launch
 from utils.config import Config
-
-import repo
-
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER
 config = Config()
+
+class Bot():
+	def __init__(self, name:str):
+		self.name = name
+		self.token = config.get_token(name)
+		self.image = "static/img/new-product/5-small.jpg"
+		self.status = config.get_status(self.name)
+		self.status_notifier = config.get_notifier_access(self.name)
+		self.progress_value = 100
+		self.progress = f"✅{config.get_temp_count_sent(self.name)} ⚠️{config.get_temp_count_errors(self.name)} 🔄{config.get_temp_count_updates(self.name)} 📡{self.progress_value}"
+		self.last_started = config.get_time_last_started(self.name)
+
+bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 
 app = Flask(__name__)  
 
@@ -169,10 +184,7 @@ def product_detail():
 
 @app.route('/product-list')
 def product_list(): 
-	bots = []
-	for bot_name in config.get_list_bots():
-		bots.append(repo.Bot(bot_name))
-	print(bots, 'data_array_bots')
+	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 	return render_template('product-list.html', bots=bots)
 
 @app.route('/product-edit')
@@ -219,6 +231,36 @@ def widgets():
 def x_editable(): 
 	return render_template('x-editable.html')
 
+# ================================================
 
-if __name__ == '__main__':  
-	app.run(debug=True) 
+@app.route('/click_play_global')
+async def click_play_global(): 
+	global bots
+	print("on all")
+	config.switch_status_all_bots_TRUE()
+	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	print(bots[0].status)
+	for bot in _launch.list_bots:
+		if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
+			await _launch.cms.CmsHandlers.posting_telegram_scrapper_flask(bot)
+		elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER:
+			await _launch.cms.CmsHandlers.posting_web_parser_flask(bot)
+	
+	return redirect('/product-list', 302)
+
+
+@app.route('/click_stop_global')
+def click_stop_global(): 
+	global bots
+	print("off all")
+	config.switch_status_all_bots_FALSE()
+	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	print(bots[0].status)
+	return redirect('/product-list', 302)
+
+async def main():
+	app.run(debug=True)
+	await _launch.main()
+
+if __name__ == '__main__':  	
+	asyncio.run(main())
