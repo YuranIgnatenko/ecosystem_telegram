@@ -1,9 +1,8 @@
 # ecosystem_telegram
 
-`ecosystem_telegram` это платформа для работы экосистемы из каналов для размещения контента 
+`ecosystem_telegram` это платформа для работы экосистемы из каналов для размещения контента
 и ботов с настройки для генерации и автопостинга материалоа
 книги, статьи, цитаты, новости, мемы, картинки, объявления по работе и прочее
-
 
 ## Использование репозитория GitHub
 
@@ -79,7 +78,6 @@ urls_channels = https://t.me/channel_url_1::0,
 
 ```
 
-
 ## Заруск
 
 ```bash
@@ -93,3 +91,7 @@ python main.py
 ## Demo bot control panel
 
 ![screen bot](/demo_screen/screen_bot.png)
+
+## Demo flask cms web-panel
+
+![screen bot](/demo_screen/screen_flask.png)

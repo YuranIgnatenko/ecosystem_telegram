@@ -1,4 +1,9 @@
-from flask import Flask, render_template  
+from flask import Flask, render_template
+from utils.config import Config
+
+import repo
+
+config = Config()
 
 app = Flask(__name__)  
 
@@ -164,7 +169,11 @@ def product_detail():
 
 @app.route('/product-list')
 def product_list(): 
-	return render_template('product-list.html')
+	bots = []
+	for bot_name in config.get_list_bots():
+		bots.append(repo.Bot(bot_name))
+	print(bots, 'data_array_bots')
+	return render_template('product-list.html', bots=bots)
 
 @app.route('/product-edit')
 def product_edit(): 

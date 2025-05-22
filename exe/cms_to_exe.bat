@@ -1,1 +1,1 @@
-pyinstaller --onefile --noconsole cms.py
+pyinstaller --onefile --noconsole ecosystem_demo.py
