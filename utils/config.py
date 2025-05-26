@@ -18,6 +18,25 @@ class Config:
 
 	# SECTION - BOT
 
+	def get_temps_counts(self, list_bot_names:list[str]):
+		class Bot():
+			def __init__(self, sent,errors,updates):
+				self.sent = sent
+				self.errors = errors
+				self.updates = updates
+		out = {}
+		config = configparser.ConfigParser()
+		config.read('config.ini', encoding='cp1251')
+	
+		for bot_name in list_bot_names:
+			temp_bot = Bot(
+				config[bot_name]['temp_count_sent'],
+				config[bot_name]['temp_count_errors'],
+				config[bot_name]['temp_count_updates']
+			)
+			out[bot_name] = temp_bot 
+		return out
+
 	def get_temp_count_updates(self, bot_name:str) -> int:
 		config = configparser.ConfigParser()
 		config.read('config.ini', encoding='cp1251')

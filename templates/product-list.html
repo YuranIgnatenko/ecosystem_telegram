@@ -2,26 +2,6 @@
 <html class="no-js" lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
-	<title>Product List | Nalika - Material Admin Template</title>
-
-	<script>
-		function fetch_and_update(path) {
-			fetch(path);
-			location.reload();
-		}
-		function click_play_global() { fetch_and_update("/click_play_global") }
-		function click_stop_global() { fetch_and_update("/click_stop_global") }
-		function click_refresh_global() { fetch_and_update("/click_refresh_global") }
-		function click_send_mail_global() { fetch_and_update("/click_send_mail_gloval") }
-
-		function click_play() { fetch_and_update("/product-edit") }
-		function click_stop() { fetch_and_update("/product-edit") }
-		function click_refresh() { fetch_and_update("/product-edit") }
-		function click_send_mail() { fetch_and_update("/product-edit") }
-	</script>
-
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- favicon
@@ -95,7 +75,7 @@
 			<div class="nalika-profile">
 				<div class="profile-dtl">
 					<a href="#"><img src="static/img/notification/4.jpg" alt="" /></a>
-					<h2>Lakian <span class="min-dtn">Das</span></h2>
+					<h2 id="h2_data">test</h2>
 				</div>
 				<div class="profile-social-dtl">
 					<ul class="dtl-social">
@@ -1180,7 +1160,7 @@
 											</div>
 											<div class="breadcomb-ctn">
 												<h2>Управление Кластером Telegram-ботов</h2>
-												<p>* Глобальные настройки и запуск</p>
+												<p id="global_status_process">* Глобальные настройки и запуск</p>
 											</div>
 										</div>
 									</div>
@@ -1235,19 +1215,21 @@
 									<td>@{{ bot.name }}</td>
 									<td>
 										{% if bot.status_notifier %}
-										<button class="pd-setting">{{ bot.status_notifier }}</button>
+										<button id="{{ bot.name }}_status_notifier" class="pd-setting">{{ bot.status_notifier
+											}}</button>
 										{% else %}
-										<button class="pd-setting-ed">{{ bot.status_notifier }}</button>
+										<button id="{{ bot.name }}_status_notifier" class="pd-setting-ed">{{ bot.status_notifier
+											}}</button>
 										{% endif %}
 									</td>
 									<td>
 										{% if bot.status %}
-										<button class="pd-setting">{{ bot.status }}</button>
+										<button id="{{ bot.name }}_status" class="pd-setting">{{ bot.status }}</button>
 										{% else %}
-										<button class="pd-setting-ed">{{ bot.status }}</button>
+										<button id="{{ bot.name }}_status" class="pd-setting-ed">{{ bot.status }}</button>
 										{% endif %}
 									</td>
-									<td>{{ bot.progress }}%</td>
+									<td id="{{ bot.name }}_progress">{{ bot.progress }}%</td>
 									<td>{{ bot.last_started }}</td>
 
 									<td>
@@ -1339,6 +1321,52 @@
 	<!-- main JS
 		============================================ -->
 	<script src="static/js/main.js"></script>
+
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>Product List | Nalika - Material Admin Template</title>
+
+	<script>
+		function fetch_and_update(path) {
+			fetch(path);
+			location.reload();
+		}
+
+		function update_data() {
+			$.ajax({
+				url: '/update',
+				method: 'GET',
+				success: function (response) {
+					$('#h2_data').text(response.h2)
+					const keys = Object.keys(response);
+					keys.forEach(function (key) {
+						$(key).text(response[key])
+						console.log(key, response[key])
+					})
+				}
+			})
+		}
+
+		$(document).ready(function () {
+			update_data()
+			setInterval(update_data, 1000);
+		})
+
+		function click_play_global() { fetch_and_update("/click_play_global") }
+		function click_stop_global() { fetch_and_update("/click_stop_global") }
+		function click_refresh_global() { fetch_and_update("/click_refresh_global") }
+		function click_send_mail_global() { fetch_and_update("/click_send_mail_gloval") }
+
+		function click_play() { fetch_and_update("/product-edit") }
+		function click_stop() { fetch_and_update("/product-edit") }
+		function click_refresh() { fetch_and_update("/product-edit") }
+		function click_send_mail() { fetch_and_update("/product-edit") }
+	</script>
+
+
 </body>
 
 </html>

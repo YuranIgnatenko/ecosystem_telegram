@@ -7,7 +7,7 @@ from services.utils import TYPE_SERVICE_WEB_PARSER
 from services.utils import resize_image, compress_image
 from services.utils import SIZE_MB_20
 from services.utils import FlagStatesDict, CounterProcessUpdates
-from services.posting import posting_notifier_start_sending
+# from services.posting import posting_notifier_start_sending
 from services.posting import posting_web_parser_flask
 from services.posting import sender_telegram_scrapper
 
@@ -150,10 +150,12 @@ class CmsHandlers:
 
 
 	async def posting_telegram_scrapper(self, callback, bot):
+		logging.info(f"Рассылка бота {bot.bot_name} (подготовка)")
+		print("test start")
 		self.config.drop_finding_updates(10)
 		if not self.config.get_status(bot.bot_name):
 			return
-		logging.info(f"Рассылка бота {bot.bot_name}")
+		logging.info(f"Рассылка бота {bot.bot_name} (запуск)")
 		self.counter_process_updates = CounterProcessUpdates(self.config)
 		self.counter_process_updates.set_bot_name(bot.bot_name)
 		await self.responses.start_find_updates(callback, bot.bot_name)

@@ -52,7 +52,7 @@ async def sender_telegram_scrapper(config, bot):
 		# await self.responses.not_active_bot(callback, bot.bot_name)
 	
 
-
+PREFIX_TEMP_FILE = "temp_file_"
 
 async def posting_web_parser_flask(config, fetcher, bot):
 	if not config.get_status(bot.bot_name):
