@@ -16,6 +16,7 @@ async def sender_telegram_scrapper(config, bot):
 	counter_process_updates.set_bot_name(bot.bot_name)
 	if config.get_status(bot.bot_name):
 		counter_process_updates.reset()
+		logging.info(f"Поиск обновлений для бота {bot.bot_name}")
 		content_list = await bot.service.get_last_messages(bot.bot_name)
 		if content_list:
 			counter_process_updates.set_updates(len(content_list))
@@ -23,33 +24,41 @@ async def sender_telegram_scrapper(config, bot):
 				temp_file_photo = "temp_file_photo"
 				try:	
 					if message.media:
-						if isinstance(message.media, telethon.types.MessageMediaPhoto):
+						if isinstance(message.media, telethon.types.MessageMediaPhoto):	
+							logging.info(f"Скачиваается медиа для бота {bot.bot_name}")
 							temp_file_photo = await bot.service.scrapper.client.download_media(message.media)
+							logging.info(f"Отправляется файл для бота {bot.bot_name}")
 							await bot.bot.send_photo(config.get_channel_chat_id(bot.bot_name), photo=FSInputFile(temp_file_photo))
 							await asyncio.sleep(config.get_delay_seconds())
 							counter_process_updates.increment_sent()
-							if message.text:
+							if message.text:	
+								logging.info(f"Отпрака текста сообщения для бота {bot.bot_name}")
 								await bot.bot.send_message(config.get_channel_chat_id(bot.bot_name), message.text)
 								await asyncio.sleep(config.get_delay_seconds())
 						else:
 							counter_process_updates.increment_errors()
-							e = f"error type:{type(message.media)}"
+							e = f"error type:{type(message.media)}"	
+							logging.info(f"Возникло исключение для {bot.bot_name}: exception: {e}")
 					else:
 						if message.text:
+							logging.info(f"Отпрака текста сообщения для бота {bot.bot_name}")
 							await bot.bot.send_message(config.get_channel_chat_id(bot.bot_name), message.text)
 							await asyncio.sleep(config.get_delay_seconds())
 							counter_process_updates.increment_sent()
 				except Exception as e:
+					logging.info(f"Возникло исключение для {bot.bot_name}: exception: {e}")
 					counter_process_updates.increment_errors()
 				finally:
 					if os.path.exists(temp_file_photo):
+						logging.info(f"Удаление временных файлов: ({temp_file_photo})")
 						os.remove(temp_file_photo)
 			config.switch_status(bot.bot_name)
+			logging.info(f"Постинг для бота {bot.bot_name} - отключен")
 		else:
 			config.switch_status(bot.bot_name)
+			logging.info(f"Постинг для бота {bot.bot_name} - отключен")
 	else:
-		pass
-		# await self.responses.not_active_bot(callback, bot.bot_name)
+		logging.info(f"Бот {bot.bot_name} - не активен")
 	
 
 PREFIX_TEMP_FILE = "temp_file_"

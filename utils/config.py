@@ -1,5 +1,8 @@
 import configparser
 from distutils.util import strtobool
+from utils.models import StatusCounter
+from time import sleep
+
 import logging
 
 class Config:
@@ -18,23 +21,19 @@ class Config:
 
 	# SECTION - BOT
 
-	def get_temps_counts(self, list_bot_names:list[str]):
-		class Bot():
-			def __init__(self, sent,errors,updates):
-				self.sent = sent
-				self.errors = errors
-				self.updates = updates
+	def get_temps_counts(self, list_bot_names:list[str]) -> dict:
+		'''returned dict { bot_name : StatusCounter }'''
 		out = {}
 		config = configparser.ConfigParser()
 		config.read('config.ini', encoding='cp1251')
 	
 		for bot_name in list_bot_names:
-			temp_bot = Bot(
+			temp_status = StatusCounter(
 				config[bot_name]['temp_count_sent'],
 				config[bot_name]['temp_count_errors'],
 				config[bot_name]['temp_count_updates']
 			)
-			out[bot_name] = temp_bot 
+			out[bot_name] = temp_status 
 		return out
 
 	def get_temp_count_updates(self, bot_name:str) -> int:
@@ -83,8 +82,14 @@ class Config:
 		return self.config[bot_name]['category_name']
 
 	def get_token(self, bot_name:str) -> str:
-		return self.config[bot_name]['token']
-
+		try:
+			return self.config[bot_name]['token']
+		except KeyError:
+			pass
+			# sleep(1)
+			# print("sleeping wait for", bot_name)
+			# self.get_token(bot_name)
+		
 	def get_namefile_temp_downloaded(self, bot_name:str) -> str:
 		return self.config[bot_name]['namefile_temp_downloaded']
 

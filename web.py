@@ -1,52 +1,31 @@
 # web_app/app.py
 
-from flask import Flask, render_template, redirect, jsonify
-import asyncio
+from flask import Flask, render_template, redirect, jsonify, request
+import asyncio, logging
 import _launch
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER
 from services import posting
 from random import randint
+from ajax.models import Bot
+from ajax.product_list import ProductList
 
 config = Config()
 
-class Bot():
-	def __init__(self, name:str):
-		# config = Config()
-		self.name = name
-		self.token = config.get_token(name)
-		self.image = "static/img/new-product/5-small.jpg"
-		self.status = config.get_status(self.name)
-		self.status_notifier = config.get_notifier_access(self.name)
-		self.progress_value = 100
-		print("keys:::", config.config.sections())
-		try:
-			self.progress = f"✅{config.get_temp_count_sent(self.name)} ⚠️{config.get_temp_count_errors(self.name)} 🔄{config.get_temp_count_updates(self.name)} 📡{self.progress_value}"
-		except KeyError as e:
-			print("error key, ",e , self.name, config.config.keys())
-		self.last_started = config.get_time_last_started(self.name)
-
 bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 
-app = Flask(__name__)  
+app = Flask(__name__)
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-@app.route('/update')
+@app.before_request
+def before_request():
+	print(request.path)
+	
+
+@app.route('/update_product_list')
 def update():
-	config = Config()
-	list_bots_status = config.get_temps_counts([bot.name for bot in bots])
-	data = {'h2':'test'}
-	for bot in bots:
-		progress_bot = list_bots_status[bot.name]
-		progress = f"✅{progress_bot.sent} ⚠️{progress_bot.errors} 🔄{progress_bot.updates}"
-
-		data[f"#{bot.name}_progress"] = progress
-		data[f"#{bot.name}_status"] = bot.status
-		data[f"#{bot.name}_status_notifier"] = bot.status_notifier
-		# with open(OUTPUT_LOG_FILE, "r") as file_log:
-		# 	last_row = ""
-		# 	last_row += " ".join(file_log.read().split('\n')[-5:])
-		# 	data[f"#global_status_process"] = last_row
+	data = ProductList().get()
 	return jsonify(data)
 
 @app.route('/')  
@@ -211,7 +190,11 @@ def product_detail():
 
 @app.route('/product-list')
 def product_list(): 
-	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	global bots
+	try:
+		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	except: 
+		pass
 	return render_template('product-list.html', bots=bots)
 
 @app.route('/product-edit')

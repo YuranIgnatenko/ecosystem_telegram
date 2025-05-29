@@ -2,6 +2,10 @@ import logging, os
 
 OUTPUT_LOG_FILE = 'logs/ecosystem_telegram.log'
 
+class IgnoreFilterCustom(logging.Filter):
+	def filter(self, record):
+		return 'GET' not in record.getMessage()
+
 def setup_logger():
 	try:
 		logging.basicConfig(

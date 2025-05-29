@@ -93,7 +93,7 @@
 								<i class="icon nalika-home icon-wrap"></i>
 								<span class="mini-click-non">Ecommerce</span>
 							</a>
-							<ul class="submenu-angle" aria-expanded="true">
+							<!-- <ul class="submenu-angle" aria-expanded="true">
 								<li><a title="Dashboard v.1" href="index "><span class="mini-sub-pro">Dashboard
 											v.1</span></a></li>
 								<li><a title="Dashboard v.2" href="index-1 "><span class="mini-sub-pro">Dashboard
@@ -114,7 +114,7 @@
 											class="mini-sub-pro">Analytics</span></a></li>
 								<li><a title="Widgets" href="widgets "><span class="mini-sub-pro">Widgets</span></a>
 								</li>
-							</ul>
+							</ul> -->
 						</li>
 						<li>
 							<a class="has-arrow" href="mailbox " aria-expanded="false"><i
@@ -179,8 +179,8 @@
 								<li><a title="Rounded Charts" href="rounded-chart "><span class="mini-sub-pro">Rounded
 											Charts</span></a></li>
 								<li><a title="C3 Charts" href="c3 "><span class="mini-sub-pro">C3 Charts</span></a></li>
-								<li><a title="Sparkline Charts" href="sparkline "><span class="mini-sub-pro">Sparkline
-											Charts</span></a></li>
+								<!-- <li><a title="Sparkline Charts" href="sparkline "><span class="mini-sub-pro">Sparkline
+											Charts</span></a></li> -->
 								<li><a title="Peity Charts" href="peity "><span class="mini-sub-pro">Peity
 											Charts</span></a></li>
 							</ul>
@@ -1076,8 +1076,8 @@
 												</li>
 												<li><a href="c3 ">C3 Charts</a>
 												</li>
-												<li><a href="sparkline ">Sparkline Charts</a>
-												</li>
+												<!-- <li><a href="sparkline ">Sparkline Charts</a>
+												</li> -->
 												<li><a href="peity ">Peity Charts</a>
 												</li>
 											</ul>
@@ -1160,7 +1160,7 @@
 											</div>
 											<div class="breadcomb-ctn">
 												<h2>Управление Кластером Telegram-ботов</h2>
-												<p id="global_status_process">* Глобальные настройки и запуск</p>
+												<code id="global_status_process">* Глобальные настройки и запуск</code>
 											</div>
 										</div>
 									</div>
@@ -1215,10 +1215,12 @@
 									<td>@{{ bot.name }}</td>
 									<td>
 										{% if bot.status_notifier %}
-										<button id="{{ bot.name }}_status_notifier" class="pd-setting">{{ bot.status_notifier
+										<button id="{{ bot.name }}_status_notifier" class="pd-setting">{{
+											bot.status_notifier
 											}}</button>
 										{% else %}
-										<button id="{{ bot.name }}_status_notifier" class="pd-setting-ed">{{ bot.status_notifier
+										<button id="{{ bot.name }}_status_notifier" class="pd-setting-ed">{{
+											bot.status_notifier
 											}}</button>
 										{% endif %}
 									</td>
@@ -1226,7 +1228,8 @@
 										{% if bot.status %}
 										<button id="{{ bot.name }}_status" class="pd-setting">{{ bot.status }}</button>
 										{% else %}
-										<button id="{{ bot.name }}_status" class="pd-setting-ed">{{ bot.status }}</button>
+										<button id="{{ bot.name }}_status" class="pd-setting-ed">{{ bot.status
+											}}</button>
 										{% endif %}
 									</td>
 									<td id="{{ bot.name }}_progress">{{ bot.progress }}%</td>
@@ -1308,8 +1311,8 @@
 	<script src="static/js/metisMenu/metisMenu-active.js"></script>
 	<!-- morrisjs JS
 		============================================ -->
-	<script src="static/js/sparkline/jquery.sparkline.min.js"></script>
-	<script src="static/js/sparkline/jquery.charts-sparkline.js"></script>
+	<!-- <script src="static/js/sparkline/jquery.sparkline.min.js"></script> -->
+	<!-- <script src="static/js/sparkline/jquery.charts-sparkline.js"></script> -->
 	<!-- calendar JS
 		============================================ -->
 	<script src="static/js/calendar/moment.min.js"></script>
@@ -1337,14 +1340,12 @@
 
 		function update_data() {
 			$.ajax({
-				url: '/update',
+				url: '/update_product_list',
 				method: 'GET',
 				success: function (response) {
-					$('#h2_data').text(response.h2)
 					const keys = Object.keys(response);
 					keys.forEach(function (key) {
 						$(key).text(response[key])
-						console.log(key, response[key])
 					})
 				}
 			})
