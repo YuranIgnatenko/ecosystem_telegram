@@ -10,6 +10,8 @@ from services import posting
 from random import randint
 from ajax.models import Bot
 from ajax.cluster_bots import ClusterBots
+from ajax.cluster_channels import ClusterChannels
+from ajax.cluster_services import ClusterServices	
 
 config = Config()
 
@@ -21,6 +23,16 @@ logging.getLogger('werkzeug').setLevel(logging.ERROR)
 @app.route('/update_cluster_bots')
 def update_cluster_bots():
 	data = ClusterBots().get()
+	return jsonify(data)
+
+@app.route('/update_cluster_channels')
+def update_cluster_channels():
+	data = ClusterChannels().get()
+	return jsonify(data)
+
+@app.route('/update_cluster_services')
+def update_cluster_services():
+	data = ClusterServices().get()
 	return jsonify(data)
 
 @app.route('/')  
@@ -193,6 +205,28 @@ def cluster_bots():
 	messages = ["message1", "message2", "message3"]
 	notifications = ["notification1", "notification2", "notification3"]
 	return render_template('cluster_bots.html', bots=bots, messages=messages, notifications=notifications)
+
+@app.route('/cluster_services')
+def cluster_services(): 
+	global bots
+	try:
+		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	except: 
+		pass
+	messages = ["message1", "message2", "message3"]
+	notifications = ["notification1", "notification2", "notification3"]
+	return render_template('cluster_services.html', bots=bots, messages=messages, notifications=notifications)
+
+@app.route('/cluster_channels')
+def cluster_channels(): 
+	global bots
+	try:
+		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+	except: 
+		pass
+	messages = ["message1", "message2", "message3"]
+	notifications = ["notification1", "notification2", "notification3"]
+	return render_template('cluster_channels.html', bots=bots, messages=messages, notifications=notifications)
 
 @app.route('/product-edit')
 def product_edit(): 
