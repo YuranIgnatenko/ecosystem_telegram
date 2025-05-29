@@ -19,15 +19,10 @@ bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-@app.before_request
-def before_request():
-	mr = ManagerRequest(request.path)
-	# if mr.is_command_click_bot():
-	if mr.is_command_update_page():
-		page_name = mr.get_last_value()
-		if page_name == "product_list":
-			data = ProductList().get()
-			return jsonify(data)
+@app.route('/update_product_list')
+def update_product_list():
+	data = ProductList().get()
+	return jsonify(data)
 
 @app.route('/')  
 def root():  
