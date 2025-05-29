@@ -3,24 +3,16 @@ from utils.logger import OUTPUT_LOG_FILE
 from ajax.models import Bot
 
 
-class ProductList():
+class ClusterBots():
 	def __init__(self):
-		"""
+
 		self.data = {
-			'list_bots' : [Bot(botname1), Bot(botname2), ...],
-			'h2' : Title, 
-			'#global_status_process' : "STATUS TASKS',
-			'#botname1_progress' : "✅10 ⚠️10 🔄20",
-			'#botname1_status' : 'True',
-			'#botname1_status_notifier : 'True',
-			'#botname1_progress' : "✅1 ⚠️1 🔄2",
-			'#botname1_status' : 'True',
-			'#botname1_status_notifier : 'True',
-		}
-		"""
-		self.data = {
-			"h2" : "Управление Кластером", 
-			'#global_status_process' : 'загрузка ...'
+			"#admin_name" : "Georg",
+			"#platform_name" : "Ecosystem",
+			"#header_global_panel" : "Управление Кластером Telegram-ботов", 
+			"#global_status_process" : "",
+			"#messages" : ["message1", "message2", "message3"],
+			"#notifications" : ["notification1", "notification2", "notification3"]
 		}
 		
 	def _generate_values(self):

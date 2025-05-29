@@ -9,8 +9,7 @@ from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARS
 from services import posting
 from random import randint
 from ajax.models import Bot
-from ajax.product_list import ProductList
-from ajax.manage_request import ManagerRequest
+from ajax.cluster_bots import ClusterBots
 
 config = Config()
 
@@ -19,9 +18,9 @@ bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-@app.route('/update_product_list')
-def update_product_list():
-	data = ProductList().get()
+@app.route('/update_cluster_bots')
+def update_cluster_bots():
+	data = ClusterBots().get()
 	return jsonify(data)
 
 @app.route('/')  
@@ -184,14 +183,16 @@ def product_cart():
 def product_detail(): 
 	return render_template('product-detail.html')
 
-@app.route('/product-list')
-def product_list(): 
+@app.route('/cluster_bots')
+def cluster_bots(): 
 	global bots
 	try:
 		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 	except: 
 		pass
-	return render_template('product-list.html', bots=bots)
+	messages = ["message1", "message2", "message3"]
+	notifications = ["notification1", "notification2", "notification3"]
+	return render_template('cluster_bots.html', bots=bots, messages=messages, notifications=notifications)
 
 @app.route('/product-edit')
 def product_edit(): 
