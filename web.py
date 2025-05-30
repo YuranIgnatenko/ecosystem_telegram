@@ -8,10 +8,13 @@ from utils.logger import OUTPUT_LOG_FILE
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER
 from services import posting
 from random import randint
-from ajax.models import Bot
+
 from ajax.cluster_bots import ClusterBots
 from ajax.cluster_channels import ClusterChannels
 from ajax.cluster_services import ClusterServices	
+
+from storage.processes import ProcessUpdating
+from storage.bot import Bot
 
 config = Config()
 

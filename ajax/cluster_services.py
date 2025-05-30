@@ -1,6 +1,6 @@
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
-from ajax.models import Bot
+from storage.bot import Bot
 
 
 class ClusterServices():

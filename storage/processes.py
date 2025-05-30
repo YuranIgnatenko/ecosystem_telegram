@@ -1,17 +1,48 @@
+from storage.redis_service import RedisService
+
+K_SENT = 'sent'
+K_ERRORS = 'errors'
+K_UPDATES = 'updates'
+K_PROGRESS_VALUE = 'progress_value'	
+
 class ProcessUpdating():
-	def __init__(self):
-		self.name_bot = ""
-		self.status = ""
-		self.channel_name = ""
-		self.temp_count_updates = ""
-		self.temp_count_sent = ""
-		self.temp_count_errors = ""
+	def __init__(self, name_bot:str):
+		self.redis_service = RedisService()
+		self.name_bot = name_bot
+		self.status = {
+			K_SENT: 0,
+			K_ERRORS: 0,
+			K_UPDATES: 0,
+			K_PROGRESS_VALUE: 0
+		}
+		try:
+			self.load_process()
+			if len(self.status) == 0:
+				self.set_status(0, 0, 0)
+				self.save_process()
+		except:
+			self.set_status(0, 0, 0)
+			self.save_process()
+
+		self.status_string = self.__str__()
+
+	def __str__(self):
+		return f"✅{self.status[K_SENT]} ⚠️{self.status[K_ERRORS]} 🔄{self.status[K_UPDATES]} 📡{self.status[K_PROGRESS_VALUE]}"
+
+	def set_status(self, sent:int, errors:int, updates:int):
+		self.status[K_SENT] = sent
+		self.status[K_ERRORS] = errors
+		self.status[K_UPDATES] = updates
+		try:
+			self.status[K_PROGRESS_VALUE] = updates / (sent+errors) * 100
+		except ZeroDivisionError:
+			self.status[K_PROGRESS_VALUE] = 0
 
 	def save_process(self):
-		pass
+		self.redis_service.save_process(self)
 
 	def load_process(self):
-		pass
+		self.status = self.redis_service.load_status(self)
 
 	def delete_process(self):
-		pass
+		self.redis_service.delete_process(self)
