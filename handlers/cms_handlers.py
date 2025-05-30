@@ -67,7 +67,7 @@ class CmsHandlers:
 			self.config.switch_status_all_bots_TRUE()
 			for bot in self.list_bots:
 				if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
-					await self.posting_telegram_scrapper(callback, self.config, bot)
+					await self.posting_telegram_scrapper(callback, bot)
 				elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER:
 					await self.posting_web_parser(callback, bot)
 

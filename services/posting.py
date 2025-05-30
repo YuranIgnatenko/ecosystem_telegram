@@ -7,19 +7,18 @@ import os
 from aiogram.types import FSInputFile
 
 from services.utils import *
+from storage.processes import ProcessUpdating
 
 async def sender_telegram_scrapper(config, bot):
 	if not config.get_status(bot.bot_name):
 		return
 	logging.info(f"Рассылка бота {bot.bot_name}")
-	counter_process_updates = CounterProcessUpdates(config)
-	counter_process_updates.set_bot_name(bot.bot_name)
+	print(config.get_status(bot.bot_name), "status +++++++++++++")
 	if config.get_status(bot.bot_name):
-		counter_process_updates.reset()
 		logging.info(f"Поиск обновлений для бота {bot.bot_name}")
 		content_list = await bot.service.get_last_messages(bot.bot_name)
 		if content_list:
-			counter_process_updates.set_updates(len(content_list))
+			bot.process_updating.set_status(0, 0, len(content_list))
 			for message in content_list:
 				temp_file_photo = "temp_file_photo"
 				try:	
@@ -30,13 +29,13 @@ async def sender_telegram_scrapper(config, bot):
 							logging.info(f"Отправляется файл для бота {bot.bot_name}")
 							await bot.bot.send_photo(config.get_channel_chat_id(bot.bot_name), photo=FSInputFile(temp_file_photo))
 							await asyncio.sleep(config.get_delay_seconds())
-							counter_process_updates.increment_sent()
+							bot.process_updating.increment_sent()
 							if message.text:	
 								logging.info(f"Отпрака текста сообщения для бота {bot.bot_name}")
 								await bot.bot.send_message(config.get_channel_chat_id(bot.bot_name), message.text)
 								await asyncio.sleep(config.get_delay_seconds())
 						else:
-							counter_process_updates.increment_errors()
+							bot.process_updating.increment_errors()
 							e = f"error type:{type(message.media)}"	
 							logging.info(f"Возникло исключение для {bot.bot_name}: exception: {e}")
 					else:
@@ -44,10 +43,10 @@ async def sender_telegram_scrapper(config, bot):
 							logging.info(f"Отпрака текста сообщения для бота {bot.bot_name}")
 							await bot.bot.send_message(config.get_channel_chat_id(bot.bot_name), message.text)
 							await asyncio.sleep(config.get_delay_seconds())
-							counter_process_updates.increment_sent()
+							bot.process_updating.increment_sent()
 				except Exception as e:
 					logging.info(f"Возникло исключение для {bot.bot_name}: exception: {e}")
-					counter_process_updates.increment_errors()
+					bot.process_updating.increment_errors()
 				finally:
 					if os.path.exists(temp_file_photo):
 						logging.info(f"Удаление временных файлов: ({temp_file_photo})")
@@ -67,19 +66,18 @@ async def posting_web_parser_flask(config, fetcher, bot):
 	if not config.get_status(bot.bot_name):
 		return
 	logging.info(f"Рассылка бота {bot.bot_name}")
-	counter_process_updates = CounterProcessUpdates(self.config)
-	counter_process_updates.set_bot_name(bot.bot_name)
+	bot.process_updating = ProcessUpdating(bot.bot_name)
+	bot.process_updating.set_status(0, 0, 0)
 	if config.get_status(bot.bot_name):
-		counter_process_updates.reset()	
 		# await self.responses.start_find_updates(callback, bot.bot_name)
 		try:
 			files_list = await bot.service.get_random_files()
 		except Exception as e:
-			counter_process_updates.increment_errors()
+			bot.process_updating.increment_errors()
 			# await self.responses.error_find_updates(callback, bot.bot_name)
 			return
 		if files_list:
-			counter_process_updates.set_updates(len(files_list))
+			bot.process_updating.set_status(0, 0, len(files_list))
 			# await self.responses.complete_find_updates(callback, bot.bot_name, files_list)
 			for file in files_list:
 				new_name_file = f"{PREFIX_TEMP_FILE}{bot.bot_name}_{file.split('/')[-1]}"
@@ -87,7 +85,7 @@ async def posting_web_parser_flask(config, fetcher, bot):
 					is_ok = fetcher.download(file, new_name_file)
 					await asyncio.sleep(1)
 					if not is_ok:
-						counter_process_updates.increment_errors()
+						bot.process_updating.increment_errors()
 						# await self.responses.error_download_file(callback, bot.bot_name, file)
 						continue
 					else:
@@ -95,10 +93,10 @@ async def posting_web_parser_flask(config, fetcher, bot):
 							compress_image(new_name_file)
 						await bot.bot.send_photo(config.get_channel_chat_id(bot.bot_name), photo=FSInputFile(new_name_file))
 						await asyncio.sleep(config.get_delay_seconds())
-						self.counter_process_updates.increment_sent()
-						# await self.responses.complete_send_file(callback, bot.bot_name, self.counter_process_updates.sent)
+						bot.process_updating.increment_sent()
+						# await self.responses.complete_send_file(callback, bot.bot_name, self.bot.bot.process_updating.sent)
 				except Exception as e:
-					counter_process_updates.increment_errors()
+					bot.process_updating.increment_errors()
 					# await self.responses.error_send_file(callback, bot.bot_name, e, new_name_file)
 					continue
 				finally:

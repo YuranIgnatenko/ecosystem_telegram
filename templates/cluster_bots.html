@@ -90,30 +90,25 @@
 							</ul>
 						</li>
 						<li>
-							<a href="mailbox " aria-expanded="false"><i
-									class="icon nalika-mail icon-wrap"></i> <span
+							<a href="mailbox " aria-expanded="false"><i class="icon nalika-mail icon-wrap"></i> <span
 									class="mini-click-non">Сообщения</span></a>
 						</li>
 						<li>
-							<a href="mailbox " aria-expanded="false"><i
-									class="icon nalika-diamond icon-wrap"></i> <span
+							<a href="mailbox " aria-expanded="false"><i class="icon nalika-diamond icon-wrap"></i> <span
 									class="mini-click-non">Premium</span></a>
 						</li>
 						<li>
-							<a href="mailbox " aria-expanded="false"><i
-									class="icon nalika-pie-chart icon-wrap"></i> <span
-									class="mini-click-non">Аналитика</span></a>
+							<a href="mailbox " aria-expanded="false"><i class="icon nalika-pie-chart icon-wrap"></i>
+								<span class="mini-click-non">Аналитика</span></a>
 						</li>
 
 						<li>
-							<a href="mailbox " aria-expanded="false"><i
-									class="icon nalika-forms icon-wrap"></i> <span
+							<a href="mailbox " aria-expanded="false"><i class="icon nalika-forms icon-wrap"></i> <span
 									class="mini-click-non">Отчёты</span></a>
 						</li>
 
 						<li>
-							<a href="#" aria-expanded="false"><i
-									class="icon nalika-settings icon-wrap"></i> <span
+							<a href="#" aria-expanded="false"><i class="icon nalika-settings icon-wrap"></i> <span
 									class="mini-click-non">Настройки</span></a>
 						</li>
 					</ul>
@@ -461,7 +456,8 @@
 															<div id="Projects" class="tab-pane fade">
 																<div class="projects-settings-wrap">
 																	<div class="note-heading-indicate">
-																		<h2><i class="icon nalika-happiness"></i> Последние
+																		<h2><i class="icon nalika-happiness"></i>
+																			Последние
 																			Активность</h2>
 																		<p> У вас 20 последних активностей.</p>
 																	</div>
@@ -473,9 +469,14 @@
 																					<div class="project-list-flow">
 																						<div
 																							class="projects-st-heading">
-																							<h2>Новый пользователь зарегистрировался</h2>
-																							<p> Точка использования Lorem
-																								Ipsum заключается в том, что она имеет более или менее нормальное распределение.</p>
+																							<h2>Новый пользователь
+																								зарегистрировался</h2>
+																							<p> Точка использования
+																								Lorem
+																								Ipsum заключается в том,
+																								что она имеет более или
+																								менее нормальное
+																								распределение.</p>
 																							<span
 																								class="project-st-time">1
 																								час назад</span>
@@ -489,8 +490,12 @@
 																						<div
 																							class="projects-st-heading">
 																							<h2>Новый заказ получен</h2>
-																							<p> Точка использования Lorem
-																								Ipsum заключается в том, что она имеет более или менее нормальное распределение.</p>
+																							<p> Точка использования
+																								Lorem
+																								Ipsum заключается в том,
+																								что она имеет более или
+																								менее нормальное
+																								распределение.</p>
 																							<span
 																								class="project-st-time">2
 																								час назад</span>
@@ -504,8 +509,12 @@
 																						<div
 																							class="projects-st-heading">
 																							<h2>Новый заказ получен</h2>
-																							<p> Точка использования Lorem
-																								Ipsum заключается в том, что она имеет более или менее нормальное распределение.</p>
+																							<p> Точка использования
+																								Lorem
+																								Ipsum заключается в том,
+																								что она имеет более или
+																								менее нормальное
+																								распределение.</p>
 																							<span
 																								class="project-st-time">3
 																								час назад</span>
@@ -520,7 +529,10 @@
 																							class="projects-st-heading">
 																							<h2>New Order Received</h2>
 																							<p> The point of using Lorem
-																								Ipsum заключается в том, что она имеет более или менее нормальное распределение.</p>
+																								Ipsum заключается в том,
+																								что она имеет более или
+																								менее нормальное
+																								распределение.</p>
 																							<span
 																								class="project-st-time">4
 																								час назад</span>
@@ -798,7 +810,7 @@
 												<li><a href="index ">Dashboard v.1</a></li>
 												<li><a href="index-1 ">Dashboard v.2</a></li>
 												<li><a href="index-3 ">Dashboard v.3</a></li>
-												<li><a href="product-list ">Product List</a></li>
+												<li><a href="cluster_bots ">Product List</a></li>
 												<li><a href="product-edit ">Product Edit</a></li>
 												<li><a href="product-detail ">Product Detail</a></li>
 												<li><a href="product-cart ">Product Cart</a></li>
@@ -958,16 +970,20 @@
 										<div class="breadcomb-report">
 											<button data-toggle="tooltip" title="Start" class="pd-setting-ed"><i
 													class="fa fa-play" aria-hidden="true"
-													onclick="click_play_global()"></i></button>
+													onclick="fetch_and_update('/click_play_global')"></i></button>
+
 											<button data-toggle="tooltip" title="Stop" class="pd-setting-ed"><i
 													class="fa fa-stop" aria-hidden="true"
-													onclick="click_stop_global()"></i></button>
+													onclick="fetch_and_update('/click_stop_global')"></i></button>
+
 											<button data-toggle="tooltip" title="Refresh" class="pd-setting-ed"><i
 													class="fa fa-refresh" aria-hidden="true"
-													onclick="click_refresh_global()"></i></button>
+													onclick="fetch_and_update('/click_refresh_global')"></i></button>
+
 											<button data-toggle="tooltip" title="Send mail" class="pd-setting-ed"><i
 													class="fa fa-send" aria-hidden="true"
-													onclick="click_send_mail_global()"></i></button>
+													onclick="fetch_and_update('/click_send_mail_global')"></i></button>
+
 											<!-- <button data-toggle="tooltip" data-placement="left" title="Download Report"
 												class="btn"><i class="icon nalika-download" onclick="click__global()"></i></button> -->
 										</div>
@@ -1021,7 +1037,7 @@
 											}}</button>
 										{% endif %}
 									</td>
-									<td id="{{ bot.name }}_progress">{{ bot.process_updating.status_string }}%</td>
+									<td id="{{ bot.name }}_progress">{{ bot.process_updating.__str__() }}%</td>
 									<td>{{ bot.last_started }}</td>
 
 									<td>
@@ -1148,15 +1164,6 @@
 			setInterval(update_data, 1000);
 		})
 
-		function click_play_global() { fetch_and_update("/click_play_global") }
-		function click_stop_global() { fetch_and_update("/click_stop_global") }
-		function click_refresh_global() { fetch_and_update("/click_refresh_global") }
-		function click_send_mail_global() { fetch_and_update("/click_send_mail_gloval") }
-
-		function click_play() { fetch_and_update("/product-edit") }
-		function click_stop() { fetch_and_update("/product-edit") }
-		function click_refresh() { fetch_and_update("/product-edit") }
-		function click_send_mail() { fetch_and_update("/product-edit") }
 	</script>
 
 

@@ -12,29 +12,32 @@ from random import randint
 from ajax.cluster_bots import ClusterBots
 from ajax.cluster_channels import ClusterChannels
 from ajax.cluster_services import ClusterServices	
-
-from storage.processes import ProcessUpdating
 from storage.bot import Bot
+from storage.redis_service import RedisService
 
 config = Config()
 
-bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
+redis_service = RedisService()
+
+bots = [Bot(bot, redis_service) for bot in config.get_list_bots()]
+for bot in bots:
+	bot.process_updating.reset()
 
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 @app.route('/update_cluster_bots')
-def update_cluster_bots():
-	data = ClusterBots().get()
+async def update_cluster_bots():
+	data = ClusterBots().get(bots)
 	return jsonify(data)
 
 @app.route('/update_cluster_channels')
-def update_cluster_channels():
+async def update_cluster_channels():
 	data = ClusterChannels().get()
 	return jsonify(data)
 
 @app.route('/update_cluster_services')
-def update_cluster_services():
+async def update_cluster_services():
 	data = ClusterServices().get()
 	return jsonify(data)
 
@@ -201,10 +204,6 @@ def product_detail():
 @app.route('/cluster_bots')
 def cluster_bots(): 
 	global bots
-	try:
-		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
-	except: 
-		pass
 	messages = ["message1", "message2", "message3"]
 	notifications = ["notification1", "notification2", "notification3"]
 	return render_template('cluster_bots.html', bots=bots, messages=messages, notifications=notifications)
@@ -212,10 +211,6 @@ def cluster_bots():
 @app.route('/cluster_services')
 def cluster_services(): 
 	global bots
-	try:
-		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
-	except: 
-		pass
 	messages = ["message1", "message2", "message3"]
 	notifications = ["notification1", "notification2", "notification3"]
 	return render_template('cluster_services.html', bots=bots, messages=messages, notifications=notifications)
@@ -223,10 +218,6 @@ def cluster_services():
 @app.route('/cluster_channels')
 def cluster_channels(): 
 	global bots
-	try:
-		bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
-	except: 
-		pass
 	messages = ["message1", "message2", "message3"]
 	notifications = ["notification1", "notification2", "notification3"]
 	return render_template('cluster_channels.html', bots=bots, messages=messages, notifications=notifications)
@@ -282,23 +273,17 @@ async def click_play_global():
 	global bots
 	print("on all")
 	config.switch_status_all_bots_TRUE()
-	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 	print(_launch.list_bots[0].bot_name, len(_launch.list_bots), "list bots")
 	for bot in _launch.list_bots:
 		print("BOT :+++++",bot, bot.bot_name, "service:",bot.service.type_service)
 
 		if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
-			print ("service scrapper")
 			await posting.sender_telegram_scrapper(config, bot)
 
 		elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER:
-			print ("service 2 parser")
-			await _launch.cms.CmsHandlers.posting_web_parser(bot)
-		else:
-			print ("service not found")
-
+			await posting.posting_web_parser_flask(config, bot)
 	
-	return redirect('/product-list', 302)
+	return redirect('/cluster_bots', 302)
 
 
 @app.route('/click_stop_global')
@@ -306,13 +291,12 @@ def click_stop_global():
 	global bots
 	print("off all")
 	config.switch_status_all_bots_FALSE()
-	bots = [Bot(bot.bot_name) for bot in _launch.list_bots]
 	print(bots[0].status)
-	return redirect('/product-list', 302)
+	return redirect('/cluster_bots', 302)
 
 async def main():
 	app.run(debug=True)
-	await _launch.main()
+	# await _launch.main()
 
 if __name__ == '__main__':  	
 	asyncio.run(main())
