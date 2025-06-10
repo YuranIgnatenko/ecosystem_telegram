@@ -32,7 +32,7 @@ class TelegramScrapperService:
 		return results
 	
 	def validate_message_text(self, text:str):
-		output = re.sub('http://\S+|https://\S+', '', text)
+		output = re.sub(r'http://\S+|https://\S+', '', text)
 		return output
 
 	async def close(self):
