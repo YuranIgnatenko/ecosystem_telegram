@@ -35,6 +35,32 @@ logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
 
 
+
+
+
+class PlatformEcosystemTelegram():
+	def __init__(self):
+		self.cluster_bots = ClusterBots()
+		self.cluster_groups = ClusterGroups()
+		self.cluster_services = ClusterServices()
+		self.communications = Communications()
+
+class ClusterBots():
+	def __init__(self):
+		pass
+
+class ClusterGroups():
+	def __init__(self):
+		pass
+
+class ClusterServices():
+	def __init__(self):
+		pass
+
+class Communications():
+	def __init__(self):
+		pass
+
 scrapper_service = TelegramScrapperService(config)
 images_service = ParserImagesService(config)
 memes_service = ParserMemesService(config)
