@@ -3,7 +3,7 @@ import telethon
 import asyncio, os
 
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
-from services.utils import TYPE_SERVICE_WEB_PARSER
+from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES, TYPE_SERVICE_WEB_PARSER_MEMES, TYPE_SERVICE_WEB_PARSER_VIDEO
 from services.utils import resize_image, compress_image
 from services.utils import SIZE_MB_20
 from services.utils import FlagStatesDict, CounterProcessUpdates
@@ -68,7 +68,7 @@ class CmsHandlers:
 			for bot in self.list_bots:
 				if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
 					await self.posting_telegram_scrapper(callback, bot)
-				elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER:
+				elif bot.service.type_service == TYPE_SERVICE_WEB_PARSER_IMAGES or bot.service.type_service == TYPE_SERVICE_WEB_PARSER_MEMES or bot.service.type_service == TYPE_SERVICE_WEB_PARSER_VIDEO	:
 					await self.posting_web_parser(callback, bot)
 
 		elif callback.data == "tab_manage_admin":

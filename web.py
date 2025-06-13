@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, redirect, jsonify, request
 import asyncio, logging
-import _launch
+import launch
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER
@@ -273,8 +273,8 @@ async def click_play_global():
 	global bots
 	print("on all")
 	config.switch_status_all_bots_TRUE()
-	print(_launch.list_bots[0].bot_name, len(_launch.list_bots), "list bots")
-	for bot in _launch.list_bots:
+	print(launch.list_bots[0].bot_name, len(launch.list_bots), "list bots")
+	for bot in launch.list_bots:
 		print("BOT :+++++",bot, bot.bot_name, "service:",bot.service.type_service)
 
 		if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
@@ -296,7 +296,7 @@ def click_stop_global():
 
 async def main():
 	app.run(debug=True)
-	# await _launch.main()
+	# await launch.main()
 
 if __name__ == '__main__':  	
 	asyncio.run(main())

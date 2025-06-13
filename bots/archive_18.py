@@ -1,50 +1,26 @@
-import asyncio
-import logging
-from aiogram import Bot, Dispatcher, types
+# bots/images.py
+
+from aiogram import Bot, Dispatcher
 from aiogram.filters.command import Command
-from aiogram.types import Message
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import FSInputFile
 
-from utils.config import Config
-from services.images_service import ParserImagesService
-from services.archive_18_service import Archive18Service
-
+from handlers.bot_handlers import BotHandlers
 import logging
 
+class Archive18Bot:
+	def __init__(self, config, service, session):
+		self.bot_name = "archive_18_bot"
+		self.config = config
+		self.bot = Bot(token=self.config.get_token(self.bot_name), session=session)
+		
+		self.service = service
+		self.dp = Dispatcher()
 
-bot_name = "archive_18_bot"
-
-config = Config()
-bot = Bot(token=config.get_token(bot_name))
-dp = Dispatcher()
-archive_18_service = Archive18Service()
-images_service = ParserImagesService()
-bias = 2
-
-@dp.message(Command("posting"))
-async def start(message: Message):
-	await timer_posting(message)
-
-
-async def timer_posting():
-	global config
-	global bot_name
-	urls = await asyncio.to_thread(archive_18_service.get_urls_random)
-	if urls:
-		for url in urls:
-			print("url", url)
-			images_service.fetcher_image.download(url, config.get_namefile_temp_downloaded(bot_name))
-			photo = FSInputFile(config.get_namefile_temp_downloaded(bot_name))
-		await bot.send_photo(config.get_channel_chat_id(bot_name), photo=photo)
-		await asyncio.sleep(config.get_delay_minutes(bot_name))
-
-@dp.message(Command("start"))
-async def start(message: Message):
-	print(message.chat.id, "+++++++++")
+		self.bot_handlers = BotHandlers(self.config, self.bot_name, self.bot, self.service)
+		self.dp.message.register(self.bot_handlers.start, Command("start"))
+		self.dp.callback_query.register(self.bot_handlers.callback_handler)
 
 
-async def launch():
-	await bot.delete_webhook(drop_pending_updates=True)
-	await dp.start_polling(bot)
-
+	async def launch(self):
+		await self.bot.delete_webhook(drop_pending_updates=True)
+		logging.info(f"Запуск бота {self.bot_name}")
+		await self.dp.start_polling(self.bot)

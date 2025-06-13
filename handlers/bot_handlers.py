@@ -1,11 +1,13 @@
 from handlers.bot_responses import answer_start, answer_panel_bot
 from aiogram import types
 import asyncio, os
-from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER, resize_image, SIZE_MB_20
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER_IMAGES, TYPE_SERVICE_WEB_PARSER_MEMES, TYPE_SERVICE_WEB_PARSER_VIDEO, resize_image, SIZE_MB_20
 from lib_fetcher_image.fetcher import FetcherImage
 from aiogram.types import FSInputFile
 import logging
-
+import requests
+import random
+import urllib
 
 class BotHandlers:
 	def __init__(self, config, bot_name, bot, service):
@@ -37,7 +39,7 @@ class BotHandlers:
 			if self.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
 				await self.posting_telegram_scrapper(callback)
 
-			elif self.service.type_service == TYPE_SERVICE_WEB_PARSER:
+			elif self.service.type_service == TYPE_SERVICE_WEB_PARSER_IMAGES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_MEMES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_VIDEO:
 				await self.posting_web_parser(callback)
 
 		elif callback.data == "switch_delay":
@@ -86,8 +88,14 @@ class BotHandlers:
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
 			await callback.message.answer("⚠️ Бот не активен")
-		
+
+	def download_image(self, url):
+		response = requests.get(url)
+		data = response.text
+		open(url.split("/")[-1], "w").write(data)
+
 	async def posting_web_parser(self, callback: types.CallbackQuery):
+		
 		logging.info(f"Рассылка бота {self.bot_name}")
 		if self.config.get_status(self.bot_name):
 			counter_updates = 0	
@@ -96,12 +104,18 @@ class BotHandlers:
 				logging.info(f"Найдено {len(files_list)} файлов для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Найдено {len(files_list)} файлов")
 				for file in files_list:
-					new_name_file = f"{self.bot_name}_{file.split('/')[-1]}"
+					new_name_file = f"{file.split('/')[-1]}"
 					try:
+						# if self.service.type_service == TYPE_SERVICE_WEB_PARSER_VIDEO:
+						# 	self.download_gif(file)
+						# 	await self.bot.send_animation(self.config.get_channel_chat_id(self.bot_name), animation=FSInputFile(new_name_file))
+						# elif self.service.type_service == TYPE_SERVICE_WEB_PARSER_MEMES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_IMAGES:
+						self.download_image(file)
 						self.fetcher.download(file, new_name_file)
 						if os.path.getsize(new_name_file) > SIZE_MB_20:
 							compress_image(new_name_file)
-						await self.bot.send_photo(self.config.get_channel_chat_id(self.bot_name), photo=FSInputFile(new_name_file))
+							await self.bot.send_photo(self.config.get_channel_chat_id(self.bot_name), photo=FSInputFile(new_name_file))
+
 						await asyncio.sleep(self.config.get_delay_seconds())
 						counter_updates += 1
 						await answer_panel_bot(callback, self.bot_name, counter_updates)
@@ -109,7 +123,7 @@ class BotHandlers:
 					except Exception as e:
 						logging.error(f"Ошибка при отправке сообщения: {e}, file: {new_name_file} в боте {self.bot_name}")
 						await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}, file: {new_name_file}")
-						await answer_panel_bot(callback, self.bot_name)
+						await answer_panel_bot(callback,f"{self.bot_name}_{str(random.randint(1, 1000000))}")
 						continue
 				self.config.switch_status(self.bot_name)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")

@@ -1,11 +1,11 @@
 from lib_archive_18 import parser
 import asyncio, random
-from services.utils import TYPE_SERVICE_WEB_PARSER
+from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES
 import logging
 
 class ParserImagesService:
 	def __init__(self, config):
-		self.type_service = TYPE_SERVICE_WEB_PARSER
+		self.type_service = TYPE_SERVICE_WEB_PARSER_IMAGES
 		self.config = config
 		self.array_urls = [	parser.URL_WALLPAPERS_PC,
 							parser.URL_ABSTRAKT]
