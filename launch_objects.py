@@ -47,7 +47,14 @@ class PlatformEcosystemTelegram():
 
 class ClusterBots():
 	def __init__(self):
-		pass
+		works_bot = works.WorksBot(config, scrapper_service, session)
+		news_bot = news.NewsBot(config, scrapper_service, session)
+		books_bot = books.BooksBot(config, scrapper_service, session)
+		images_bot = images.ImagesBot(config, images_service, session)
+		memes_bot = meme.MemesBot(config, memes_service, session)
+		archive_18_bot = archive_18.Archive18Bot(config, video_service, session)
+		list_bots = [works_bot, news_bot, books_bot, images_bot, memes_bot, archive_18_bot]
+		cms_bot = cms.CmsBot(config, list_bots, session)
 
 class ClusterGroups():
 	def __init__(self):
@@ -55,7 +62,10 @@ class ClusterGroups():
 
 class ClusterServices():
 	def __init__(self):
-		pass
+		scrapper_service = TelegramScrapperService(config)
+		images_service = ParserImagesService(config)
+		memes_service = ParserMemesService(config)
+		video_service = ParserVideoService(config)
 
 class Communications():
 	def __init__(self):
