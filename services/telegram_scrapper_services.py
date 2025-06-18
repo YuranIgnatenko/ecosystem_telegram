@@ -4,11 +4,14 @@ from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 import logging
 import re
 
+from services.ai import Ai
+
 class TelegramScrapperService:
 	def __init__(self, config):
 		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
 		self.config = config
 		self.scrapper = Scraper(self.config.get_api_id(), self.config.get_api_hash())
+		self.ai = Ai(self.config)
 
 	async def get_last_messages(self, bot_name:str):
 		logging.info(f"Получение последних сообщений для бота {bot_name} работает сервис {self.type_service}")
@@ -29,6 +32,9 @@ class TelegramScrapperService:
 							self.config.set_id_last_message(bot_name, url_name, message.id)
 							is_first_message = False
 						results.append(message)
+
+		# message.text = self.ai.automatic_formatted_message(message)
+
 		return results
 	
 	def validate_message_text(self, text:str):

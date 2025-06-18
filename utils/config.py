@@ -19,6 +19,14 @@ class Config:
 			temp.append(bot)
 		return temp
 
+	# SECTION deepseek
+
+	def get_deepseek_api_key(self) -> str:
+		return self.config['deepseek']['api_key']
+
+	def get_deepseek_api_base(self) -> str:
+		return self.config['deepseek']['api_base']
+	
 	# SECTION - BOT
 
 	def get_temps_counts(self, list_bot_names:list[str]) -> dict:
