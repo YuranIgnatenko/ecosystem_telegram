@@ -1,7 +1,4 @@
 aiogram
-lib_fetcher_image
-lib_archive_18==1.2
-lib_telegram_scrap==1.1
 schedule
 free-proxy
 telethon==1.32.1

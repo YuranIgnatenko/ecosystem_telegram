@@ -5,7 +5,7 @@ import asyncio, logging
 import launch
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
-from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER, TYPE_SERVICE_WEB_PARSER
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER ,TYPE_SERVICE_WEB_PARSER_MEMES ,TYPE_SERVICE_WEB_PARSER_IMAGES ,TYPE_SERVICE_WEB_PARSER_VIDEO 
 from services import posting
 from random import randint
 

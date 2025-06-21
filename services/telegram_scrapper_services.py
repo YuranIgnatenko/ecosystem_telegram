@@ -1,8 +1,9 @@
-from lib_telegram_scrap.scrapper import Scraper
-import asyncio
+from utils.lib_telegram_scrap.lib_telegram_scrap.scrapper import Scraper
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 import logging
 import re
+
+from threading import Thread
 
 from services.ai import Ai
 
@@ -34,6 +35,15 @@ class TelegramScrapperService:
 						results.append(message)
 
 		# message.text = self.ai.automatic_formatted_message(message)
+		# def _thread():
+		# 	Thread(target=)
+
+		# for message in results:
+		# 	if message.text:
+		# 		t = Thread(target=self.ai.automatic_formatted_message, args=(message.text, ))
+		# 		t.start()
+		# 		t.join()
+		# 		print(t)
 
 		return results
 	
