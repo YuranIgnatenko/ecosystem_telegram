@@ -14,7 +14,7 @@ class Config:
 	def get_list_bots(self) -> list:
 		temp = []
 		for bot in self.config.sections():
-			if bot in ['global', 'cms_bot']:
+			if bot in ['global', 'cms_bot', 'deepseek']:
 				continue
 			temp.append(bot)
 		return temp

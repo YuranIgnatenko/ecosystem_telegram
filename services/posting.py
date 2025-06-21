@@ -13,7 +13,6 @@ async def sender_telegram_scrapper(config, bot):
 	if not config.get_status(bot.bot_name):
 		return
 	logging.info(f"Рассылка бота {bot.bot_name}")
-	print(config.get_status(bot.bot_name), "status +++++++++++++")
 	if config.get_status(bot.bot_name):
 		logging.info(f"Поиск обновлений для бота {bot.bot_name}")
 		content_list = await bot.service.get_last_messages(bot.bot_name)

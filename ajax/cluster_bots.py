@@ -25,7 +25,6 @@ class ClusterBots():
 		for bot in list_bots:
 			bot.process_updating.load_process()
 			progress = bot.process_updating.status_string
-			print(f"progress: {progress} bot name: {bot.name}")
 
 			self.data[f"#{bot.name}_progress"] = progress
 			self.data[f"#{bot.name}_status"] = bot.status

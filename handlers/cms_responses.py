@@ -5,7 +5,6 @@ import logging
 class Responses:
 	def __init__(self):
 		pass
-
 	 
 	async def start_find_updates(self, callback, bot_name):
 		temp_status = f"🌐 Поиск обновлений для бота {bot_name}"

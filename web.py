@@ -271,12 +271,9 @@ def x_editable():
 @app.route('/click_play_global')
 async def click_play_global(): 
 	global bots
-	print("on all")
 	config.switch_status_all_bots_TRUE()
-	print(launch.list_bots[0].bot_name, len(launch.list_bots), "list bots")
 	for bot in launch.list_bots:
-		print("BOT :+++++",bot, bot.bot_name, "service:",bot.service.type_service)
-
+		print(bot.service.type_service)
 		if bot.service.type_service == TYPE_SERVICE_TELEGRAM_SCRAPPER:
 			await posting.sender_telegram_scrapper(config, bot)
 
