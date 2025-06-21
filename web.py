@@ -15,6 +15,8 @@ from ajax.cluster_services import ClusterServices
 from storage.bot import Bot
 from storage.redis_service import RedisService
 
+import threading
+
 config = Config()
 
 redis_service = RedisService()
@@ -295,5 +297,17 @@ async def main():
 	app.run(debug=True)
 	# await launch.main()
 
+def thread_app_flask_run():
+	thread_app_flask = threading.Thread(target=app.run, args=True)
+	thread_app_flask.start()
+	thread_app_flask.join()
+
+def thread_bots_launch():
+	thread_bots_launch = threading.Thread(target=launch.main)
+	thread_bots_launch.start()
+	thread_bots_launch.join()
+
 if __name__ == '__main__':  	
-	asyncio.run(main())
+	# asyncio.run(main())
+	thread_app_flask_run()
+	thread_bots_launch()
