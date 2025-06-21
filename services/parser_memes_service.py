@@ -1,4 +1,4 @@
-from utils.lib_archive_18.lib_archive_18 import parser
+from utils.lib_archive_18 import parser
 import asyncio, random
 from services.utils import TYPE_SERVICE_WEB_PARSER_MEMES
 import logging

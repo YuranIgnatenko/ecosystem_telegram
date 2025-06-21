@@ -1,4 +1,4 @@
-from utils.lib_telegram_scrap.lib_telegram_scrap.scrapper import Scraper
+from utils.lib_telegram_scrap.scrapper import Scraper
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 import logging
 import re

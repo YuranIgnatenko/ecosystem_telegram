@@ -1,4 +1,4 @@
-from utils.lib_video_parser.lib_video_parser import parser
+from utils.lib_video_parser import parser
 import asyncio, random
 from services.utils import TYPE_SERVICE_WEB_PARSER_VIDEO
 import logging
