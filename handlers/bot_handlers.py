@@ -10,8 +10,9 @@ import random
 import urllib
 
 class BotHandlers:
-	def __init__(self, config, bot_name, bot, service):
-		self.config = config	
+	def __init__(self, bot_name, bot, service, admin_user_id, channel_chat_id ):
+		self.admin_user_id = admin_user_id
+		self.channel_chat_id = channel_chat_id
 		self.bot_name = bot_name
 		self.bot = bot
 		self.service = service
@@ -19,7 +20,7 @@ class BotHandlers:
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
-		if message.from_user.id in self.config.get_admin_user_id():
+		if str(message.from_user.id) in str(self.admin_user_id):
 			await answer_start(message, self.bot_name)
 		else:
 			await message.answer("🔒 У вас нет доступа к этому боту")
@@ -27,12 +28,12 @@ class BotHandlers:
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
 		
-		if callback.from_user.id not in self.config.get_admin_user_id():
+		if callback.from_user.id not in self.admin_user_id:
 			await callback.answer("🔒 У вас нет доступа к этому боту")
 			return	
 
 		if callback.data == "switch_posting":
-			self.config.switch_status(self.bot_name)
+			# self.config.switch_status(self.bot_name)
 
 			await answer_panel_bot(callback, self.bot_name)
 
@@ -42,22 +43,10 @@ class BotHandlers:
 			elif self.service.type_service == TYPE_SERVICE_WEB_PARSER_IMAGES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_MEMES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_VIDEO:
 				await self.posting_web_parser(callback)
 
-		elif callback.data == "switch_delay":
-			self.config.switch_delay()
-			await answer_panel_bot(callback, self.bot_name)
-
-		elif callback.data == "switch_count_posting_images	":
-			self.config.switch_count_posting_images()
-			await answer_panel_bot(callback, self.bot_name)
-
-		elif callback.data == "switch_count_posting_memes":
-			self.config.switch_count_posting_memes()
-			await answer_panel_bot(callback, self.bot_name)
-
 
 	async def posting_telegram_scrapper(self, callback: types.CallbackQuery):
 		logging.info(f"Рассылка бота {self.bot_name}")
-		if self.config.get_status(self.bot_name):
+		if True: #self.config.get_status(self.bot_name):
 			counter_updates = 0
 			content_list = await self.service.get_last_messages(self.bot_name)
 			if content_list:
@@ -67,23 +56,23 @@ class BotHandlers:
 					counter_updates += 1
 					await answer_panel_bot(callback, self.bot_name, counter_updates)
 					if message.text:
-						if not self.config.get_status(self.bot_name):return
+						# if not self.config.get_status(self.bot_name):return
 						try:	
-							await self.bot.send_message(self.config.get_channel_chat_id(self.bot_name), message.text)
-							await asyncio.sleep(self.config.get_delay_seconds())
+							await self.bot.send_message(self.channel_chat_id, message.text)
+							await asyncio.sleep(2)
 						except Exception as e:
 							logging.error(f"Ошибка при отправке сообщения: {e} в боте {self.bot_name}")
 							await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}")
-							self.config.switch_status(self.bot_name)
+							# self.config.switch_status(self.bot_name)
 							await answer_panel_bot(callback, self.bot_name)
-				self.config.switch_status(self.bot_name)
+				# self.config.switch_status(self.bot_name)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Рассылка завершена")
 				await answer_panel_bot(callback, self.bot_name)
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
 				await callback.message.answer("⚠️ Обновления не найдены")
-				self.config.switch_status(self.bot_name)
+				# self.config.switch_status(self.bot_name)
 				await answer_panel_bot(callback, self.bot_name)
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
@@ -97,7 +86,7 @@ class BotHandlers:
 	async def posting_web_parser(self, callback: types.CallbackQuery):
 		
 		logging.info(f"Рассылка бота {self.bot_name}")
-		if self.config.get_status(self.bot_name):
+		if True: #self.config.get_status(self.bot_name):
 			counter_updates = 0	
 			files_list = await self.service.get_random_files()
 			if files_list:
@@ -113,10 +102,10 @@ class BotHandlers:
 						self.download_image(file)
 						self.fetcher.download(file, new_name_file)
 						if os.path.getsize(new_name_file) > SIZE_MB_20:
-							compress_image(new_name_file)
-							await self.bot.send_photo(self.config.get_channel_chat_id(self.bot_name), photo=FSInputFile(new_name_file))
+							# compress_image(new_name_file)
+							await self.bot.send_photo(self._channel_chat_id, photo=FSInputFile(new_name_file))
 
-						await asyncio.sleep(self.config.get_delay_seconds())
+						await asyncio.sleep(2)
 						counter_updates += 1
 						await answer_panel_bot(callback, self.bot_name, counter_updates)
 						os.remove(new_name_file)
@@ -125,14 +114,14 @@ class BotHandlers:
 						await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}, file: {new_name_file}")
 						await answer_panel_bot(callback,f"{self.bot_name}_{str(random.randint(1, 1000000))}")
 						continue
-				self.config.switch_status(self.bot_name)
+				# self.config.switch_status(self.bot_name)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Рассылка завершена")
 				await answer_panel_bot(callback, self.bot_name)
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
 				await callback.message.answer("⚠️ Обновления не найдены")
-				self.config.switch_status(self.bot_name)
+				# self.config.switch_status(self.bot_name)
 				await answer_panel_bot(callback, self.bot_name)
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")

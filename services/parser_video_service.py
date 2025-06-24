@@ -4,9 +4,8 @@ from services.utils import TYPE_SERVICE_WEB_PARSER_VIDEO
 import logging
 
 class ParserVideoService:
-	def __init__(self, config):
+	def __init__(self):
 		self.type_service = TYPE_SERVICE_WEB_PARSER_VIDEO
-		self.config = config
 		self.parser = parser.Parser(parser.URL_HOME)
 
 	# async def get_random_files(self):

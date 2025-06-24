@@ -8,19 +8,20 @@ from threading import Thread
 from services.ai import Ai
 
 class TelegramScrapperService:
-	def __init__(self, config):
+	def __init__(self, ai, account, urls_channels):
+		self.account = account
 		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
-		self.config = config
-		self.scrapper = Scraper(self.config.get_api_id(), self.config.get_api_hash())
-		self.ai = Ai(self.config)
+		self.scrapper = Scraper(self.account.api_id, self.account.api_hash)
+		self.ai = ai
+		self.urls_channels = urls_channels
 
 	async def get_last_messages(self, bot_name:str):
 		logging.info(f"Получение последних сообщений для бота {bot_name} работает сервис {self.type_service}")
 		results = []
-		dict_channels = self.config.get_urls_channels(bot_name)
+		dict_channels = self.urls_channels
 		for url_name, url_id in dict_channels.items():
 			is_first_message = True
-			message_list = await self.scrapper.get_last_messages(url_name, self.config.get_count_last_messages())
+			message_list = await self.scrapper.get_last_messages(url_name)
 			if message_list:
 				for message in message_list:
 					if int(message.id) <= int(url_id):

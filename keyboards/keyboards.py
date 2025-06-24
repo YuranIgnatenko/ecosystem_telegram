@@ -2,7 +2,6 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
 from aiogram import types
 
-from utils.config import Config
 
 def new_button(text:str, callback_data:str):
 	return types.InlineKeyboardButton(
@@ -15,7 +14,6 @@ def back_button(callback_data:str):
 		callback_data=callback_data)
 
 def list_bots():
-	config = Config()
 	builder = InlineKeyboardBuilder()
 	
 	builder.row(
@@ -57,19 +55,19 @@ def list_bots():
 
 
 def panel_bot(bot_name:str, counter_updates:int = 0):
-	config = Config()
+
 	builder = InlineKeyboardBuilder()
 
 	if bot_name == 'images_bot':
 		builder.row(
 			types.InlineKeyboardButton(
-				text=f"📁 Кол-во файлов: {config.get_count_posting_images()}", 
+				text=f"📁 Кол-во файлов: {99}", 
 				callback_data="switch_count_posting_images"))
 
 	elif bot_name == 'memes_bot':
 		builder.row(
 			types.InlineKeyboardButton(
-				text=f"📁 Кол-во файлов: {config.get_count_posting_memes()}", 
+				text=f"📁 Кол-во файлов: {99}", 
 				callback_data="switch_count_posting_memes"))	
 
 	if counter_updates > 0:
@@ -80,20 +78,20 @@ def panel_bot(bot_name:str, counter_updates:int = 0):
 
 	builder.row(
 		types.InlineKeyboardButton(
-			text=f"⏳ Таймаут {config.get_delay_seconds()} сек.", 
+			text=f"⏳ Таймаут {99} сек.", 
 			callback_data="switch_delay"))
 
-	if config.get_status(bot_name) == False:
+	if True:
 		builder.row(	
 			types.InlineKeyboardButton(
 				text=f"🟢 Запустить", 
 				callback_data=f"switch_posting"))
 				
-	elif config.get_status(bot_name) == True:
-		builder.row(	
-		types.InlineKeyboardButton(
-			text=f"🔴 Остановить", 
-			callback_data=f"switch_posting"))
+	# elif config.get_status(bot_name) == True:
+	# 	builder.row(	
+	# 	types.InlineKeyboardButton(
+	# 		text=f"🔴 Остановить", 
+	# 		callback_data=f"switch_posting"))
 	
 	builder.row(
 		types.InlineKeyboardButton(
@@ -113,7 +111,6 @@ def panel_bot(bot_name:str, counter_updates:int = 0):
 
 
 def global_settings():
-	config = Config()
 	builder = InlineKeyboardBuilder()
 
 	builder.row(	

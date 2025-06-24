@@ -23,10 +23,6 @@ config = Config()
 
 redis_service = RedisService()
 
-bots = [Bot(bot, redis_service) for bot in config.get_list_bots()]
-for bot in bots:
-	bot.process_updating.reset()
-
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
@@ -291,7 +287,7 @@ async def click_play_global():
 def click_stop_global(): 
 	global bots
 	print("off all")
-	config.switch_status_all_bots_FALSE()
+	# config.switch_status_all_bots_FALSE()
 	print(bots[0].status)
 	return redirect('/cluster_bots', 302)
 

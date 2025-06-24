@@ -4,9 +4,8 @@ from services.utils import TYPE_SERVICE_WEB_PARSER_MEMES
 import logging
 
 class ParserMemesService:
-	def __init__(self, config):
+	def __init__(self):
 		self.type_service = TYPE_SERVICE_WEB_PARSER_MEMES
-		self.config = config
 		self.array_urls = [	parser.URL_HUMOR_I_PRICOLY,
 							parser.URL_MEMY,
 							parser.URL_PICTURE_ANEKTODY]

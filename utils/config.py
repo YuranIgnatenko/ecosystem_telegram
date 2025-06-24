@@ -11,101 +11,7 @@ class Config:
 		self.namefile = 'config.ini'
 		self.config.read(self.namefile, encoding='cp1251')
 
-	def get_list_bots(self) -> list:
-		temp = []
-		for bot in self.config.sections():
-			if bot in ['global', 'cms_bot', 'deepseek']:
-				continue
-			temp.append(bot)
-		return temp
 
-	# SECTION deepseek
-
-	def get_deepseek_api_key(self) -> str:
-		return self.config['deepseek']['api_key']
-
-	def get_deepseek_api_base(self) -> str:
-		return self.config['deepseek']['api_base']
-	
-	# SECTION - BOT
-
-	def get_temps_counts(self, list_bot_names:list[str]) -> dict:
-		'''returned dict { bot_name : StatusCounter }'''
-		out = {}
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-	
-		for bot_name in list_bot_names:
-			temp_status = StatusCounter(
-				config[bot_name]['temp_count_sent'],
-				config[bot_name]['temp_count_errors'],
-				config[bot_name]['temp_count_updates']
-			)
-			out[bot_name] = temp_status 
-		return out
-
-	def get_temp_count_updates(self, bot_name:str) -> int:
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		return int(config[bot_name]['temp_count_updates'])
-
-	def get_temp_count_sent(self, bot_name:str) -> int:
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		return int(config[bot_name]['temp_count_sent'])
-
-	def get_temp_count_errors(self, bot_name:str) -> int:
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		return int(config[bot_name]['temp_count_errors'])	
-
-	def set_temp_count_updates(self, bot_name:str, count_updates:int):
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		config[bot_name]['temp_count_updates'] = str(count_updates)
-		config.write(open('config.ini', 'w', encoding='cp1251'))
-
-	def set_temp_count_sent(self, bot_name:str, count_sent:int):
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		config[bot_name]['temp_count_sent'] = str(count_sent)
-		config.write(open('config.ini', 'w', encoding='cp1251'))
-
-	def set_temp_count_errors(self, bot_name:str, count_errors:int):
-		config = configparser.ConfigParser()
-		config.read('config.ini', encoding='cp1251')
-		config[bot_name]['temp_count_errors'] = str(count_errors)
-		config.write(open('config.ini', 'w', encoding='cp1251'))
-
-
-
-	def get_time_last_started(self, bot_name:str) -> str:
-		temp  = self.config[bot_name]['time_last_started']	
-		if temp.strip() == "":
-			return "00:00"
-		return temp
-
-
-	def get_category_name(self, bot_name:str) -> str:
-		return self.config[bot_name]['category_name']
-
-	def get_token(self, bot_name:str) -> str:
-		try:
-			return self.config[bot_name]['token']
-		except KeyError:
-			pass
-			# sleep(1)
-			# print("sleeping wait for", bot_name)
-			# self.get_token(bot_name)
-		
-	def get_namefile_temp_downloaded(self, bot_name:str) -> str:
-		return self.config[bot_name]['namefile_temp_downloaded']
-
-	def get_channel_name(self, bot_name:str) -> str:
-		return self.config[bot_name]['channel_name']
-
-	def get_channel_chat_id(self, bot_name:str) -> int:
-		return int(self.config[bot_name]['channel_chat_id'])
 
 	def get_urls_channels(self, bot_name:str) -> dict:
 		result = {}
@@ -119,16 +25,6 @@ class Config:
 		return strtobool(self.config[bot_name]['status'])
 
 
-	# SECTION - GLOBAL
-	
-	def get_delay_seconds(self) -> int:
-		return int(self.config['global']['delay_seconds'])
-
-	def get_api_hash(self) -> str:
-		return self.config['global']['api_hash']
-
-	def get_api_id(self) -> int:
-		return int(self.config['global']['api_id'])
 
 	def get_count_last_messages(self) -> int:
 		return int(self.config['global']['count_last_messages'])
