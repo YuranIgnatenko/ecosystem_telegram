@@ -192,12 +192,12 @@ class Config:
 	# SETTINGS - SET NEW VALUES TO FILE CONFIG
 
 	def switch_status(self, bot_name: str):
-		logging.info(f"Переключение рассылки бота {bot_name} на {self.get_status(bot_name)}")
 		old_value = strtobool(self.config[bot_name]['status'])
 		new_value = not old_value
 		self.config.set(bot_name, 'status', str(new_value))
 		self.config[bot_name]['status'] = str(new_value)
 		self.save()
+		logging.info(f"Переключение рассылки бота {bot_name} на {self.get_status(bot_name)}")
 
 	def switch_status_all_bots(self):
 		for bot_name in self.get_list_bots():

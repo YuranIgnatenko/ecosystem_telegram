@@ -2,7 +2,9 @@
 
 from flask import Flask, render_template, redirect, jsonify, request
 import asyncio, logging
-import launch
+
+import socket
+
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER ,TYPE_SERVICE_WEB_PARSER_MEMES ,TYPE_SERVICE_WEB_PARSER_IMAGES ,TYPE_SERVICE_WEB_PARSER_VIDEO 
@@ -293,21 +295,31 @@ def click_stop_global():
 	print(bots[0].status)
 	return redirect('/cluster_bots', 302)
 
-async def main():
-	app.run(debug=True)
-	# await launch.main()
-
 def thread_app_flask_run():
-	thread_app_flask = threading.Thread(target=app.run, args=True)
+	thread_app_flask = threading.Thread(target=app.run)
 	thread_app_flask.start()
 	thread_app_flask.join()
 
-def thread_bots_launch():
-	thread_bots_launch = threading.Thread(target=launch.main)
+def thread_run_tcp_client():
+	thread_bots_launch = threading.Thread(target=run_tcp_client)
 	thread_bots_launch.start()
 	thread_bots_launch.join()
 
-if __name__ == '__main__':  	
-	# asyncio.run(main())
+import conf
+
+def run_tcp_client():
+	isRunClient = True
+
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+		s.connect((conf.HOST, conf.PORT))
+		print("Клиент запущен")
+		while isRunClient:
+			data = input("Сообщение: ")
+			s.sendall(bytes(data, encoding='utf-8'))
+			data = s.recv(1024)
+			if data:
+				print(f"Ответ от сервера {str(data, encoding='utf-8')}") 
+
+if __name__ == '__main__':
+	thread_run_tcp_client()
 	thread_app_flask_run()
-	thread_bots_launch()
