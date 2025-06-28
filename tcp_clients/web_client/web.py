@@ -14,7 +14,7 @@ from random import randint
 from ajax.cluster_bots import ClusterBots
 from ajax.cluster_channels import ClusterChannels
 from ajax.cluster_services import ClusterServices	
-from storage.bot import Bot
+from storage.bot_settings import Bot
 from storage.redis_service import RedisService
 
 import threading

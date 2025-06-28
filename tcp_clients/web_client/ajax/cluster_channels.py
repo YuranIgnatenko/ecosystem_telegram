@@ -1,6 +1,6 @@
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
-from storage.bot import Bot
+from storage.bot_settings import Bot
 
 
 class ClusterChannels():

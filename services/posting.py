@@ -7,7 +7,7 @@ import os
 from aiogram.types import FSInputFile
 
 from services.utils import *
-from storage.processes import ProcessUpdating
+from storage.process_updating import ProcessUpdating
 
 async def sender_telegram_scrapper(config, bot):
 	if not config.get_status(bot.bot_name):

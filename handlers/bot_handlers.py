@@ -13,7 +13,8 @@ from aiogram.types import FSInputFile
 import logging
 import requests
 import random
-from storage.processes import ProcessUpdating
+from storage.process_updating import ProcessUpdating
+from storage.bot_settings import BotSettings, K_IS_STARTED
 
 class BotHandlers:
 	def __init__(self, bot_name, bot, service_type, admin_user_id, channel_chat_id, redis_service):
@@ -23,7 +24,8 @@ class BotHandlers:
 		self.bot = bot
 		self.service_type = service_type
 		self.fetcher = FetcherImage()
-		self.proc_upd = ProcessUpdating(bot_name, redis_service)
+		self.proc_updating = ProcessUpdating(bot_name, redis_service)
+		self.bot_settings = BotSettings(bot_name, service_type, redis_service)
 
 	def set_service(self, service):
 		self.service = service
@@ -39,10 +41,10 @@ class BotHandlers:
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
 		if str(callback.from_user.id) not in str(self.admin_user_id):
 			await callback.answer("🔒 У вас нет доступа к этому боту")
-			return	
+			return False
 
 		if callback.data == "switch_posting":
-			# self.config.switch_status(self.bot_name)
+			self.bot_settings.switch_starting(not self.bot_settings.settings[K_IS_STARTED])
 
 			await answer_panel_bot(callback, self.bot_name)
 
@@ -55,34 +57,38 @@ class BotHandlers:
 
 	async def posting_telegram_scrapper(self, callback: types.CallbackQuery):
 		logging.info(f"Рассылка бота {self.bot_name}")
-		if True: #self.config.get_status(self.bot_name):
-			counter_updates = 0
+		if self.bot_settings.settings[K_IS_STARTED]:
+			c_updates = 0
+			c_errors = 0
+			c_sents = 0
+			self.proc_updating.set_status(c_sents, c_errors, c_updates)
 			content_list = await self.service.get_last_messages(self.bot_name)
 			if content_list:
 				logging.info(f"Найдено {len(content_list)} обновлений для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Найдено {len(content_list)} обновлений")
 				for message in content_list:
-					counter_updates += 1
-					await answer_panel_bot(callback, self.bot_name, counter_updates)
+					c_updates += 1
+					await answer_panel_bot(callback, self.bot_name, c_updates, True)
 					if message.text:
-						# if not self.config.get_status(self.bot_name):return
+						if not self.bot_settings.settings[K_IS_STARTED]:
+							return
 						try:	
 							await self.bot.send_message(self.channel_chat_id, message.text)
 							await asyncio.sleep(2)
 						except Exception as e:
 							logging.error(f"Ошибка при отправке сообщения: {e} в боте {self.bot_name}")
 							await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}")
-							# self.config.switch_status(self.bot_name)
-							await answer_panel_bot(callback, self.bot_name)
-				# self.config.switch_status(self.bot_name)
+							self.proc_updating.set_status(c_sents, c_updates, c_errors)
+							await answer_panel_bot(callback, self.bot_name, True)
+				self.bot_settings.switch_starting(False)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Рассылка завершена")
-				await answer_panel_bot(callback, self.bot_name)
+				await answer_panel_bot(callback, self.bot_name, False)
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
 				await callback.message.answer("⚠️ Обновления не найдены")
-				# self.config.switch_status(self.bot_name)
-				await answer_panel_bot(callback, self.bot_name)
+				self.bot_settings.switch_starting(False)
+				await answer_panel_bot(callback, self.bot_name, False)
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
 			await callback.message.answer("⚠️ Бот не активен")
@@ -93,10 +99,11 @@ class BotHandlers:
 		open(url.split("/")[-1], "w").write(data)
 
 	async def posting_web_parser(self, callback: types.CallbackQuery):
-		
 		logging.info(f"Рассылка бота {self.bot_name}")
-		if True: #self.config.get_status(self.bot_name):
-			counter_updates = 0	
+		if self.bot_settings[K_IS_STARTED]:
+			c_updates = 0
+			c_errors = 0
+			c_sents = 0
 			files_list = await self.service.get_random_files()
 			if files_list:
 				logging.info(f"Найдено {len(files_list)} файлов для бота {self.bot_name}")
@@ -115,24 +122,25 @@ class BotHandlers:
 							await self.bot.send_photo(self._channel_chat_id, photo=FSInputFile(new_name_file))
 
 						await asyncio.sleep(2)
-						counter_updates += 1
-						await answer_panel_bot(callback, self.bot_name, counter_updates)
+						c_updates += 1
+						await answer_panel_bot(callback, self.bot_name, c_updates, True)
 						os.remove(new_name_file)
 					except Exception as e:
 						logging.error(f"Ошибка при отправке сообщения: {e}, file: {new_name_file} в боте {self.bot_name}")
 						await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}, file: {new_name_file}")
-						await answer_panel_bot(callback,f"{self.bot_name}_{str(random.randint(1, 1000000))}")
+						await answer_panel_bot(callback,f"{self.bot_name}_{str(random.randint(1, 1000000))}", 0, True)
 						continue
-				# self.config.switch_status(self.bot_name)
+				self.bot_settings.switch_starting(False)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
 				await callback.message.answer(f"🔔 Рассылка завершена")
-				await answer_panel_bot(callback, self.bot_name)
+				await answer_panel_bot(callback, self.bot_name, False)
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
 				await callback.message.answer("⚠️ Обновления не найдены")
-				# self.config.switch_status(self.bot_name)
-				await answer_panel_bot(callback, self.bot_name)
+				self.bot_settings.switch_starting(False)
+				await answer_panel_bot(callback, self.bot_name, False)
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
 			await callback.message.answer("⚠️ Бот не активен")
+		self.bot_settings.switch_starting(False)
 

@@ -9,6 +9,7 @@ import logging
 
 from aiogram.client.session.aiohttp import AiohttpSession
 
+
 class BotBase:
 	def __init__(self, bot_name, token, channel_chat_id, service_type, http_session, admin_user_id, redis_service):
 		self.bot_name = bot_name
@@ -19,6 +20,7 @@ class BotBase:
 		self.service_type = service_type
 		self.session = http_session
 		self.redis_service = redis_service
+		self.is_started = False
 
 		self.bot = Bot(token=token, session=AiohttpSession())
 		self.dp = Dispatcher()

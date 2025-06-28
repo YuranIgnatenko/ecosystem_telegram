@@ -53,8 +53,7 @@ def list_bots():
 	return builder.as_markup()
 
 
-def panel_bot(bot_name:str, counter_updates:int = 0):
-
+def panel_bot(bot_name:str, counter_updates:int = 0, value_is_starting:bool = False):
 	builder = InlineKeyboardBuilder()
 
 	if bot_name == 'images_bot':
@@ -80,17 +79,17 @@ def panel_bot(bot_name:str, counter_updates:int = 0):
 			text=f"⏳ Таймаут {99} сек.", 
 			callback_data="switch_delay"))
 
-	if True:
+	if not value_is_starting:
 		builder.row(	
 			types.InlineKeyboardButton(
 				text=f"🟢 Запустить", 
 				callback_data=f"switch_posting"))
 				
-	# elif config.get_status(bot_name) == True:
-	# 	builder.row(	
-	# 	types.InlineKeyboardButton(
-	# 		text=f"🔴 Остановить", 
-	# 		callback_data=f"switch_posting"))
+	else:
+		builder.row(	
+		types.InlineKeyboardButton(
+			text=f"🔴 Остановить", 
+			callback_data=f"switch_posting"))
 	
 	builder.row(
 		types.InlineKeyboardButton(

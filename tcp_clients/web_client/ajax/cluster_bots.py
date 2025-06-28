@@ -1,7 +1,7 @@
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
-from storage.bot import Bot
-from storage.processes import ProcessUpdating
+from storage.bot_settings import Bot
+from storage.process_updating import ProcessUpdating
 
 class ClusterBots():
 	def __init__(self):

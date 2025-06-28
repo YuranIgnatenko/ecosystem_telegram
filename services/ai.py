@@ -1,6 +1,5 @@
 from openai import OpenAI
 
-
 GROUP_LITERATURA = 'литература и афоризмы'
 GROUP_WORKS = 'обьявления о работе'
 GROUP_NEWS = 'новости и события'

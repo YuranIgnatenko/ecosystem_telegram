@@ -55,7 +55,7 @@ class ProcessUpdating():
 		self.redis_service.save_process(self)
 
 	def load_process(self):
-		self.status = self.redis_service.load_status(self)
+		self.status = self.redis_service.load_process_status(self)
 
 	def delete_process(self):
 		self.redis_service.delete_process(self)
