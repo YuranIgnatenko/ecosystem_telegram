@@ -31,7 +31,7 @@ class TelegramScrapperService:
 							text = self.validate_message_text(message.text)
 							message.text = text
 						if is_first_message:
-							self.config.set_id_last_message(bot_name, url_name, message.id)
+							# self.config.set_id_last_message(bot_name, url_name, message.id)
 							is_first_message = False
 						results.append(message)
 

@@ -1,9 +1,9 @@
 from PIL import Image
 
-TYPE_SERVICE_TELEGRAM_SCRAPPER = "telegram_scrapper"
-TYPE_SERVICE_WEB_PARSER_MEMES = "web_parser_memes"
-TYPE_SERVICE_WEB_PARSER_IMAGES = "web_parser_images"
-TYPE_SERVICE_WEB_PARSER_VIDEO = "web_parser_video"
+TYPE_SERVICE_TELEGRAM_SCRAPPER:str = "telegram_scrapper"
+TYPE_SERVICE_WEB_PARSER_MEMES:str = "web_parser_memes"
+TYPE_SERVICE_WEB_PARSER_IMAGES:str = "web_parser_images"
+TYPE_SERVICE_WEB_PARSER_VIDEO:str = "web_parser_video"
 
 SIZE_MB_20 = 20 * 1024 * 1024
 

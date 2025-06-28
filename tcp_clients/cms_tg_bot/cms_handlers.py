@@ -16,7 +16,7 @@ from aiogram.types import FSInputFile
 import logging
 
 from keyboards import tabs
-from handlers.cms_responses import Responses
+from tcp_clients.cms_tg_bot.cms_responses import Responses
 from utils.logger import OUTPUT_LOG_FILE
 
 class CmsHandlers:

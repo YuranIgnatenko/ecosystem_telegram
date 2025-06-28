@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
 from aiogram import types
-
+import random
 
 def new_button(text:str, callback_data:str):
 	return types.InlineKeyboardButton(
@@ -107,6 +107,12 @@ def panel_bot(bot_name:str, counter_updates:int = 0):
 		types.InlineKeyboardButton(
 			text=f"{'ㅤㅤㅤㅤㅤ'*80}", 
 			callback_data="--"))
+	
+	builder.row(
+		types.InlineKeyboardButton(
+			text=f"code:{random.randint(1111,9999)}", 
+			callback_data="--"))
+	
 	return builder.as_markup()
 
 

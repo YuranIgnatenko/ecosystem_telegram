@@ -2,7 +2,12 @@ from preloader import Preloader
 from preloader import NAMEFILE_PRELOADER
 
 from bots.base import BotBase
-from bots.cms import CmsBot
+from tcp_clients.cms_tg_bot.cms import CmsBot
+
+from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
+from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES
+from services.utils import TYPE_SERVICE_WEB_PARSER_MEMES
+from services.utils import TYPE_SERVICE_WEB_PARSER_VIDEO
 
 
 from aiogram.client.session.aiohttp import AiohttpSession
@@ -20,19 +25,16 @@ class GeneratorClusters:
 		
 		for bot in self.preloader.get_bots():
 			temp_bot = BotBase(bot.bot_name, bot.token, bot.channel_chat_id, bot.service_type, self.http_session, self.preloader.get_account().admin_user_id)
-			match bot.service_type:
-				case 'cms':
-					temp_bot = CmsBot(bot.token, self.http_session)
-				case 'telegram_scrapper':
-					temp_bot.service = TelegramScrapperService(self.preloader.get_ai(), self.preloader.get_account(), self.preloader.get_urls_channels(bot.bot_name))
-				case 'parser_images':
-					temp_bot.service = ParserImagesService()
-				case 'parser_memes':
-					temp_bot.service = ParserMemesService()
-				case 'parser_video':
-					temp_bot.service = ParserVideoService()
-				case _:
-				# 	temp_bot.service = None
-					print(f"error service type: {bot.service_type}")
+			if bot.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
+				temp_bot.set_service(TelegramScrapperService(self.preloader.get_ai(), self.preloader.get_account(), self.preloader.get_urls_channels(bot.bot_name)))
+			elif bot.service_type == TYPE_SERVICE_WEB_PARSER_IMAGES:
+				temp_bot.set_service(ParserImagesService())
+			elif bot.service_type == TYPE_SERVICE_WEB_PARSER_MEMES:
+				temp_bot.set_service(ParserMemesService())
+			elif bot.service_type == TYPE_SERVICE_WEB_PARSER_VIDEO:
+				temp_bot.set_service(ParserVideoService())
+			else:
+			# 	temp_bot.service = None
+				print(f"bot: {bot.bot_name} error service type: {bot.service_type}")
 			self.cluster_bots.append(temp_bot)
 		

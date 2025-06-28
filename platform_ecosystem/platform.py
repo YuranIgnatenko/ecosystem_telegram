@@ -16,8 +16,11 @@ class Platform:
 		self.cluster = GeneratorClusters()
 
 	async def cluster_start(self):
-		await asyncio.gather(*[asyncio.create_task(bot.launch()) for bot in self.cluster.cluster_bots])	
+		def new_task(bot):
+			return bot.launch()
+		await asyncio.gather(*[asyncio.create_task(new_task(bot)) for bot in self.cluster.cluster_bots])	
 
+	# supporting only one client
 	def tcp_listener_start(self):
 		print("tcp listener starting")
 		# logging.INFO("tcp listener starting")
@@ -28,11 +31,14 @@ class Platform:
 			with conn:
 				print(f"connected client: {addr}")
 				while True:
-					data = conn.recv(1024)
-					if not data:
-						break
-					print(f"getting from client ({addr}) data : {str(data, encoding='utf-8')}")
-					conn.sendall(data)
+					try:
+						data = conn.recv(1024)
+						if not data:
+							break
+						print(f"getting from client ({addr}) data : {str(data, encoding='utf-8')}")
+						conn.sendall(data)
+					except ConnectionResetError:
+						print(f'client ({addr}) disconnected')
 
 	def launch(self):
 		self.thread_tcp_listener = threading.Thread(target=self.tcp_listener_start)
