@@ -16,6 +16,7 @@ import logging
 import requests
 import random
 import urllib
+from storage.processes import ProcessUpdating
 
 class BotHandlers:
 	def __init__(self, bot_name, bot, service_type, admin_user_id, channel_chat_id ):
@@ -25,6 +26,7 @@ class BotHandlers:
 		self.bot = bot
 		self.service_type = service_type
 		self.fetcher = FetcherImage()
+		self.proc_upd = ProcessUpdating()
 
 	def set_service(self, service):
 		self.service = service
