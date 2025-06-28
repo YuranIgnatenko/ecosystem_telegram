@@ -6,7 +6,7 @@ import conf
 
 from utils.logger import setup_logger, IgnoreFilterCustom
 
-from generator_clusters import GeneratorClusters
+from platform_ecosystem.generator_clusters import GeneratorClusters
 
 logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
