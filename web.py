@@ -294,12 +294,10 @@ def click_stop_global():
 def thread_app_flask_run():
 	thread_app_flask = threading.Thread(target=app.run)
 	thread_app_flask.start()
-	thread_app_flask.join()
 
 def thread_run_tcp_client():
 	thread_bots_launch = threading.Thread(target=run_tcp_client)
 	thread_bots_launch.start()
-	thread_bots_launch.join()
 
 import conf
 
@@ -308,13 +306,13 @@ def run_tcp_client():
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 		s.connect((conf.HOST, conf.PORT))
-		print("Клиент запущен")
+		print("web client starting")
 		while isRunClient:
-			data = input("Сообщение: ")
+			data = input("command/message: ")
 			s.sendall(bytes(data, encoding='utf-8'))
 			data = s.recv(1024)
 			if data:
-				print(f"Ответ от сервера {str(data, encoding='utf-8')}") 
+				print(f"data from server {str(data, encoding='utf-8')}") 
 
 if __name__ == '__main__':
 	thread_run_tcp_client()
