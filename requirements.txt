@@ -1,6 +1,0 @@
-aiogram
-schedule
-free-proxy
-telethon==1.32.1
-python-dotenv==1.0.0
-prettytable

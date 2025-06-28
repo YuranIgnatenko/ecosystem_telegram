@@ -1,7 +1,5 @@
 import configparser
 
-import logging
-
 NAMEFILE_PRELOADER = "preloader.ini"
 
 class PreloaderBot:

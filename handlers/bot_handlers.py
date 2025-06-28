@@ -2,12 +2,10 @@ from handlers.bot_responses import answer_start, answer_panel_bot
 from aiogram import types
 import asyncio, os
 
-from services.utils import resize_image, SIZE_MB_20
+from services.utils import SIZE_MB_20
 
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 from services.utils import TYPE_SERVICE_WEB_PARSER_MEMES
-from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES
-from services.utils import TYPE_SERVICE_WEB_PARSER_VIDEO
 
 
 from lib_fetcher_image.fetcher import FetcherImage
@@ -15,26 +13,23 @@ from aiogram.types import FSInputFile
 import logging
 import requests
 import random
-import urllib
 from storage.processes import ProcessUpdating
 
 class BotHandlers:
-	def __init__(self, bot_name, bot, service_type, admin_user_id, channel_chat_id ):
+	def __init__(self, bot_name, bot, service_type, admin_user_id, channel_chat_id, redis_service):
 		self.admin_user_id = admin_user_id
 		self.channel_chat_id = channel_chat_id
 		self.bot_name = bot_name
 		self.bot = bot
 		self.service_type = service_type
 		self.fetcher = FetcherImage()
-		self.proc_upd = ProcessUpdating()
+		self.proc_upd = ProcessUpdating(bot_name, redis_service)
 
 	def set_service(self, service):
 		self.service = service
 
 	async def start(self, message: types.Message):
 		logging.info(f"Использование команды /start бота {self.bot_name} id: {message.from_user.id} username: {message.from_user.username}")
-		print(message.from_user.id, self.admin_user_id)
-
 		if str(message.from_user.id) in str(self.admin_user_id):
 			await answer_start(message, self.bot_name)
 		else:
@@ -42,7 +37,6 @@ class BotHandlers:
 
 	async def callback_handler(self, callback: types.CallbackQuery):
 		logging.info(f"Использование команды {callback.data} бота {self.bot_name} id: {callback.from_user.id} username: {callback.from_user.username}")
-		
 		if str(callback.from_user.id) not in str(self.admin_user_id):
 			await callback.answer("🔒 У вас нет доступа к этому боту")
 			return	

@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import threading 
 import socket
 import conf
@@ -22,8 +21,6 @@ class Platform:
 
 	# supporting only one client
 	def tcp_listener_start(self):
-		print("tcp listener starting")
-		# logging.INFO("tcp listener starting")
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.bind((conf.HOST, conf.PORT))
 			s.listen()

@@ -1,7 +1,7 @@
-from telethon import TelegramClient, events
+from telethon import TelegramClient
 from telethon.tl.functions.channels import GetFullChannelRequest
 from telethon.tl.functions.messages import GetFullChatRequest
-from telethon.tl.types import Channel, Chat, User
+from telethon.tl.types import Channel, Chat
 import asyncio
 import os
 import configparser

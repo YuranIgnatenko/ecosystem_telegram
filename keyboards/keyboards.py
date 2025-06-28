@@ -1,5 +1,4 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import InlineKeyboardButton
 from aiogram import types
 import random
 
