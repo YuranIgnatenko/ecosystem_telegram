@@ -40,8 +40,6 @@ class Preloader:
 	def get_account(self) -> PreloaderAccount:
 		return PreloaderAccount(self.file['account'])
 
-
-
 	def get_urls_channels(self, bot_name:str) -> dict:
 		result = {}
 		for url in self.file[bot_name]['urls_channels'].split(','):
@@ -49,3 +47,17 @@ class Preloader:
 			url_id = url.split('::')[1].strip()
 			result[url_name] = url_id
 		return result
+
+	def _dict_to_str(self, dict_data:dict) -> str:
+		return ',\n'.join([f'{key}::{value}' for key, value in dict_data.items()])
+	
+	def set_id_last_message(self, bot_name:str, url_name:str, id_last_message:int):
+		old_dict = self.get_urls_channels(bot_name)	
+		old_dict[url_name] = id_last_message
+		self.file[bot_name]['urls_channels'] = self._dict_to_str(old_dict)
+		self.save()
+
+	def save(self):
+		with open('config.ini', 'w') as file:
+			self.file.write(file)
+
