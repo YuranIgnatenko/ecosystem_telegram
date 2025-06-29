@@ -31,12 +31,16 @@ class ProcessUpdating():
 		self.set_status(0, 0, 0)
 		self.save_process()
 
+	def set_updates(self, count:int):
+		self.status[K_UPDATES] = str(count)
+		self.save_process()
+
 	def increment_sent(self):
-		self.status[K_SENT] += 1
+		self.status[K_SENT] = str(int(self.status[K_SENT]) + 1)
 		self.save_process()
 
 	def increment_errors(self):
-		self.status[K_ERRORS] += 1	
+		self.status[K_ERRORS] = str(int(self.status[K_ERRORS]) + 1)
 		self.save_process()
 
 	def set_status(self, sent:int, errors:int, updates:int):
@@ -53,6 +57,7 @@ class ProcessUpdating():
 	def save_process(self):
 		print(f"save_process: {self.status}")
 		self.redis_service.save_process(self)
+		self.load_process()
 
 	def load_process(self):
 		self.status = self.redis_service.load_process_status(self)

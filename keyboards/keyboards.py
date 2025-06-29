@@ -1,7 +1,7 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import types
 import random
-
+from storage.process_updating import K_ERRORS, K_SENT, K_UPDATES
 def new_button(text:str, callback_data:str):
 	return types.InlineKeyboardButton(
 		text=text, 
@@ -53,7 +53,9 @@ def list_bots():
 	return builder.as_markup()
 
 
-def panel_bot(bot_name:str, counter_updates:int = 0, value_is_starting:bool = False):
+def panel_bot(bot_name:str, process_updating=None, value_is_starting:bool = False, info_string:str = ""):
+	value_is_starting = bool(value_is_starting)
+
 	builder = InlineKeyboardBuilder()
 
 	if bot_name == 'images_bot':
@@ -68,33 +70,31 @@ def panel_bot(bot_name:str, counter_updates:int = 0, value_is_starting:bool = Fa
 				text=f"📁 Кол-во файлов: {99}", 
 				callback_data="switch_count_posting_memes"))	
 
-	if counter_updates > 0:
+	if process_updating != None:
 		builder.row(
 			types.InlineKeyboardButton(
-				text=f"📤 Отправлено : {counter_updates}", 
+				text=f"📤 Найдено : {process_updating.status[K_UPDATES]}", 
+				callback_data="--"))
+		builder.row(
+			types.InlineKeyboardButton(
+				text=f"✅ Отправлено : {process_updating.status[K_SENT]}", 
+				callback_data="--"))
+		builder.row(
+			types.InlineKeyboardButton(
+				text=f"⚠️ Пропущенные : {process_updating.status[K_ERRORS]}", 
 				callback_data="--"))
 
-	builder.row(
-		types.InlineKeyboardButton(
-			text=f"⏳ Таймаут {99} сек.", 
-			callback_data="switch_delay"))
-
-	if not value_is_starting:
+	if value_is_starting == False:
 		builder.row(	
 			types.InlineKeyboardButton(
 				text=f"🟢 Запустить", 
 				callback_data=f"switch_posting"))
 				
-	else:
+	elif value_is_starting == True:
 		builder.row(	
 		types.InlineKeyboardButton(
 			text=f"🔴 Остановить", 
 			callback_data=f"switch_posting"))
-	
-	builder.row(
-		types.InlineKeyboardButton(
-			text=f"⏰ Расписание", 
-			callback_data="--"))
 
 	builder.row(
 		types.InlineKeyboardButton(
@@ -103,9 +103,15 @@ def panel_bot(bot_name:str, counter_updates:int = 0, value_is_starting:bool = Fa
 	
 	builder.row(
 		types.InlineKeyboardButton(
-			text=f"{'ㅤㅤㅤㅤㅤ'*80}", 
+			text=f"{''*30}", 
 			callback_data="--"))
 	
+	if info_string.strip() != "":
+		builder.row(
+			types.InlineKeyboardButton(
+				text=f"{info_string}", 
+				callback_data="--"))
+
 	builder.row(
 		types.InlineKeyboardButton(
 			text=f"code:{random.randint(1111,9999)}", 

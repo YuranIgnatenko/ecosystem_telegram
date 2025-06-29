@@ -13,7 +13,7 @@ from aiogram.types import FSInputFile
 import logging
 import requests
 import random
-from storage.process_updating import ProcessUpdating
+from storage.process_updating import ProcessUpdating, K_UPDATES, K_SENT, K_ERRORS
 from storage.bot_settings import BotSettings, K_IS_STARTED
 
 class BotHandlers:
@@ -25,6 +25,7 @@ class BotHandlers:
 		self.service_type = service_type
 		self.fetcher = FetcherImage()
 		self.proc_updating = ProcessUpdating(bot_name, redis_service)
+		self.proc_updating.reset()
 		self.bot_settings = BotSettings(bot_name, service_type, redis_service)
 
 	def set_service(self, service):
@@ -58,40 +59,38 @@ class BotHandlers:
 	async def posting_telegram_scrapper(self, callback: types.CallbackQuery):
 		logging.info(f"Рассылка бота {self.bot_name}")
 		if self.bot_settings.settings[K_IS_STARTED]:
-			c_updates = 0
-			c_errors = 0
-			c_sents = 0
-			self.proc_updating.set_status(c_sents, c_errors, c_updates)
+			await answer_panel_bot(callback, self.bot_name, self.proc_updating, True)
 			content_list = await self.service.get_last_messages(self.bot_name)
 			if content_list:
 				logging.info(f"Найдено {len(content_list)} обновлений для бота {self.bot_name}")
-				await callback.message.answer(f"🔔 Найдено {len(content_list)} обновлений")
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Найдено {len(content_list)} обновлений")
+
+				self.proc_updating.set_updates(len(content_list))
 				for message in content_list:
-					c_updates += 1
-					await answer_panel_bot(callback, self.bot_name, c_updates, True)
+					await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Отправка обновления")
 					if message.text:
 						if not self.bot_settings.settings[K_IS_STARTED]:
 							return
 						try:	
 							await self.bot.send_message(self.channel_chat_id, message.text)
 							await asyncio.sleep(2)
+							self.proc_updating.increment_sent()
 						except Exception as e:
 							logging.error(f"Ошибка при отправке сообщения: {e} в боте {self.bot_name}")
-							await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}")
-							self.proc_updating.set_status(c_sents, c_updates, c_errors)
-							await answer_panel_bot(callback, self.bot_name, True)
+							await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"⚠️ Ошибка при отправке сообщения: {e}")
+
+							self.proc_updating.increment_errors()
 				self.bot_settings.switch_starting(False)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
-				await callback.message.answer(f"🔔 Рассылка завершена")
-				await answer_panel_bot(callback, self.bot_name, False)
+				await answer_panel_bot(callback, self.bot_name, 0, False, f"🔔 Рассылка завершена")
+				
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
-				await callback.message.answer("⚠️ Обновления не найдены")
 				self.bot_settings.switch_starting(False)
-				await answer_panel_bot(callback, self.bot_name, False)
+				await answer_panel_bot(callback, self.bot_name, 0, False, f"Обновления не найдены для бота {self.bot_name}")
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
-			await callback.message.answer("⚠️ Бот не активен")
+			await answer_panel_bot(callback, self.bot_name, 0, False, "⚠️ Бот не активен")
 
 	def download_image(self, url):
 		response = requests.get(url)
