@@ -56,7 +56,7 @@ class Ai():
 		res = res.split(self.symbol_split)
 		return res
 	
-	def automatic_formatted_message(self, message):
+	def automatic_formatted_message(self, message:str) -> str:
 		pre_promt = f"определи к какой группе относятся сообщения из перечисленных: {TYPES_GROUPS}. напиши в ответе только название соответствующей категории и больше ничего. не добавляй в ответ комментариев и разъяснений - тольео название категориии"
 		response = self.client.chat.completions.create(
 			model="deepseek-chat", 

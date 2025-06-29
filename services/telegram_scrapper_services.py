@@ -8,7 +8,7 @@ from threading import Thread
 from services.ai import Ai
 
 class TelegramScrapperService:
-	def __init__(self, ai, account, urls_channels, preloader):
+	def __init__(self, ai:Ai, account, urls_channels, preloader):
 		self.account = account
 		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
 		self.scrapper = Scraper(self.account.api_id, self.account.api_hash)
@@ -50,7 +50,8 @@ class TelegramScrapperService:
 		return results
 	
 	def validate_message_text(self, text:str):
-		output = re.sub(r'http://\S+|https://\S+', '', text)
+		output = self.ai.automatic_formatted_message(text)
+		# output = re.sub(r'http://\S+|https://\S+', '', text)
 		return output
 
 	async def close(self):
