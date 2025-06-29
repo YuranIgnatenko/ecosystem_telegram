@@ -2,10 +2,11 @@ from handlers.bot_responses import answer_start, answer_panel_bot
 from aiogram import types
 import asyncio, os
 
-from services.utils import SIZE_MB_20
+from services.utils import SIZE_MB_20, compress_image
 
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 from services.utils import TYPE_SERVICE_WEB_PARSER_MEMES
+from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES
 
 
 from lib_fetcher_image.fetcher import FetcherImage
@@ -52,7 +53,7 @@ class BotHandlers:
 			if self.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
 				await self.posting_telegram_scrapper(callback)
 
-			elif self.service_type == TYPE_SERVICE_WEB_PARSER_MEMES:
+			elif self.service_type in [TYPE_SERVICE_WEB_PARSER_MEMES, TYPE_SERVICE_WEB_PARSER_IMAGES]:
 				await self.posting_web_parser(callback)
 
 
@@ -63,9 +64,8 @@ class BotHandlers:
 			content_list = await self.service.get_last_messages(self.bot_name)
 			if content_list:
 				logging.info(f"Найдено {len(content_list)} обновлений для бота {self.bot_name}")
-				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Найдено {len(content_list)} обновлений")
-
 				self.proc_updating.set_updates(len(content_list))
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Найдено {len(content_list)} обновлений")
 				for message in content_list:
 					await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Отправка обновления")
 					if message.text:
@@ -95,51 +95,51 @@ class BotHandlers:
 	def download_image(self, url):
 		response = requests.get(url)
 		data = response.text
-		open(url.split("/")[-1], "w").write(data)
+		with open(url.split("/")[-1], "w", encoding='utf-8') as file:
+			file.write(data)
 
 	async def posting_web_parser(self, callback: types.CallbackQuery):
 		logging.info(f"Рассылка бота {self.bot_name}")
-		if self.bot_settings[K_IS_STARTED]:
-			c_updates = 0
-			c_errors = 0
-			c_sents = 0
+		if self.bot_settings.settings[K_IS_STARTED]:
+			await answer_panel_bot(callback, self.bot_name, self.proc_updating, True)
 			files_list = await self.service.get_random_files()
 			if files_list:
 				logging.info(f"Найдено {len(files_list)} файлов для бота {self.bot_name}")
-				await callback.message.answer(f"🔔 Найдено {len(files_list)} файлов")
+				self.proc_updating.set_updates(len(files_list))
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Найдено {len(files_list)} файлов")
 				for file in files_list:
-					new_name_file = f"{file.split('/')[-1]}"
+					await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Отправка обновления")
+					new_name_file = f"temp_{file.split('/')[-1]}"
 					try:
 						# if self.service.type_service == TYPE_SERVICE_WEB_PARSER_VIDEO:
 						# 	self.download_gif(file)
 						# 	await self.bot.send_animation(self.config.get_channel_chat_id(self.bot_name), animation=FSInputFile(new_name_file))
 						# elif self.service.type_service == TYPE_SERVICE_WEB_PARSER_MEMES or self.service.type_service == TYPE_SERVICE_WEB_PARSER_IMAGES:
-						self.download_image(file)
+						# self.download_image(file)
 						self.fetcher.download(file, new_name_file)
 						if os.path.getsize(new_name_file) > SIZE_MB_20:
-							# compress_image(new_name_file)
+							compress_image(new_name_file)
 							await self.bot.send_photo(self._channel_chat_id, photo=FSInputFile(new_name_file))
-
 						await asyncio.sleep(2)
-						c_updates += 1
-						await answer_panel_bot(callback, self.bot_name, c_updates, True)
-						os.remove(new_name_file)
+						self.proc_updating.increment_sent()
+						await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, "Файл отправлен")
+						# os.remove(new_name_file)
 					except Exception as e:
+						self.proc_updating.increment_errors()
+						await answer_panel_bot(callback, self.bot_name, self.proc_updating, True,f"Ошибка при отправке сообщения: {e}, file: {new_name_file} в боте {self.bot_name}")
 						logging.error(f"Ошибка при отправке сообщения: {e}, file: {new_name_file} в боте {self.bot_name}")
-						await callback.message.answer(f"⚠️ Ошибка при отправке сообщения: {e}, file: {new_name_file}")
-						await answer_panel_bot(callback,f"{self.bot_name}_{str(random.randint(1, 1000000))}", 0, True)
 						continue
 				self.bot_settings.switch_starting(False)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
-				await callback.message.answer(f"🔔 Рассылка завершена")
-				await answer_panel_bot(callback, self.bot_name, False)
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"🔔 Рассылка завершена")
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
-				await callback.message.answer("⚠️ Обновления не найдены")
 				self.bot_settings.switch_starting(False)
-				await answer_panel_bot(callback, self.bot_name, False)
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"⚠️ Обновления не найдены")
+
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
-			await callback.message.answer("⚠️ Бот не активен")
+			await answer_panel_bot(callback, self.bot_name, self.proc_updating, True, f"⚠️ Бот не активен")
+
 		self.bot_settings.switch_starting(False)
 

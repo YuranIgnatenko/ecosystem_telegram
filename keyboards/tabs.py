@@ -130,7 +130,7 @@ async def tab_manage_bots(callback:types.CallbackQuery, info_status:str):
 async def tab_manage_bots_select_bot(callback:types.CallbackQuery, info_status:str, bot_name:str):
 	random_code = random.randint(1111, 9999)
 	info_status += f"	*code:{random_code}"
-	# config = Config()
+
 	builder = InlineKeyboardBuilder()
 
 	builder.row(new_button("🔄 Статус", f"manage_bots_select_bot_edit_status_{bot_name}"))
