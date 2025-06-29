@@ -51,11 +51,9 @@ class ProcessUpdating():
 			self.status[K_PROGRESS_VALUE] = updates / (sent+errors) * 100
 		except ZeroDivisionError:
 			self.status[K_PROGRESS_VALUE] = 0
-		print(f"set_status: {self.status}")
 		self.save_process()
 
 	def save_process(self):
-		print(f"save_process: {self.status}")
 		self.redis_service.save_process(self)
 		self.load_process()
 

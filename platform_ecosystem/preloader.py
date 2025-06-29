@@ -23,9 +23,12 @@ class PreloaderAccount:
 
 class Preloader:
 	def __init__(self, namefile:str=NAMEFILE_PRELOADER):
-		self.file = configparser.ConfigParser()
+		self._reopen_file(namefile)
+
+	def _reopen_file(self, namefile):
 		self.namefile = namefile
-		self.file.read(self.namefile, encoding='cp1251')
+		self.file = configparser.ConfigParser()
+		self.file.read(namefile, encoding='cp1251')
 
 	def get_bots(self) -> list[PreloaderBot]:
 		bots = []
@@ -53,11 +56,14 @@ class Preloader:
 	
 	def set_id_last_message(self, bot_name:str, url_name:str, id_last_message:int):
 		old_dict = self.get_urls_channels(bot_name)	
+		
 		old_dict[url_name] = id_last_message
 		self.file[bot_name]['urls_channels'] = self._dict_to_str(old_dict)
+		self.file.set(bot_name,'urls_channels',self._dict_to_str(old_dict))
 		self.save()
+		self._reopen_file(self.namefile)
 
 	def save(self):
-		with open('config.ini', 'w') as file:
-			self.file.write(file)
+		with open(NAMEFILE_PRELOADER, 'w') as preloader_file:
+			self.file.write(preloader_file)
 

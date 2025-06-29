@@ -26,8 +26,8 @@ class BotSettings():
 		self.redis_service.save_bot(self)
 
 	def save_settings(self):
-		print(f"save_bot: {self.settings}")
 		self.redis_service.save_bot(self)
 
 	def load_settings(self):
 		self.settings = self.redis_service.load_bot_settings(self)
+

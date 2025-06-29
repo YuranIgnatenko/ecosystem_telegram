@@ -29,7 +29,11 @@ class GeneratorClusters:
 		for bot in self.preloader.get_bots():
 			temp_bot = BotBase(bot.bot_name, bot.token, bot.channel_chat_id, bot.service_type, self.http_session, self.preloader.get_account().admin_user_id, self.redis_service)
 			if bot.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
-				temp_bot.set_service(TelegramScrapperService(self.preloader.get_ai(), self.preloader.get_account(), self.preloader.get_urls_channels(bot.bot_name)))
+				temp_bot.set_service(TelegramScrapperService(
+					self.preloader.get_ai(), 
+					self.preloader.get_account(), 
+					self.preloader.get_urls_channels(bot.bot_name),
+					self.preloader))
 			elif bot.service_type == TYPE_SERVICE_WEB_PARSER_IMAGES:
 				temp_bot.set_service(ParserImagesService())
 			elif bot.service_type == TYPE_SERVICE_WEB_PARSER_MEMES:
