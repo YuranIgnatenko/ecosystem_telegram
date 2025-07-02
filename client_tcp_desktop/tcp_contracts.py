@@ -1,3 +1,6 @@
+ERROR_SPLIT_TYPE_VALUE = -1
+ERROR_NOT_FOUND_TYPE = -2
+
 TYPE_BOT = "type_bot"
 TYPE_ADMIN = "type_admin"
 TYPE_MESSAGE = "type_message"
@@ -53,17 +56,15 @@ def extract_model_from_tcp_data(data):
 	print(data)
 	parts = [d.split() for d in data.split(SPHT)]
 	if len(parts) != 2:
-		return -1
+		return ERROR_SPLIT_TYPE_VALUE
 	
 	type_, value_ = parts[0], parts[1]
 	if type_ not in TYPES_ALL_LIST:
 		print(type_, TYPES_ALL_LIST)
-		return -2
+		return ERROR_NOT_FOUND_TYPE
 	
 	if type_ == TYPE_PING_PONG:
 		return ModelPingPong()
 	elif type_ == TYPE_BOT:
 		return ModelBot(value_)
-	else:
-		return -3
 
