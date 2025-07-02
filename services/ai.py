@@ -7,9 +7,9 @@ GROUP_NEWS = 'новости и события'
 TYPES_GROUPS = [GROUP_LITERATURA,GROUP_WORKS,GROUP_NEWS]
 
 class Ai():
-	def __init__(self, config):
-		self.api_base = config.get_deepseek_api_base()
-		self.api_key = config.get_deepseek_api_key()
+	def __init__(self, ai_preloader):
+		self.api_base = ai_preloader.api_base
+		self.api_key = ai_preloader.api_key
 		self.symbol_split = "symbol_split_here"		
 		
 		self.client = OpenAI(api_key=self.api_key, base_url=self.api_base)
@@ -72,10 +72,10 @@ class Ai():
 
 		if res in TYPES_GROUPS:
 			if res == GROUP_LITERATURA:
-				temp_text = self.get_formatted_post_libraries(message.text)
+				temp_text = self.get_formatted_post_libraries(message)
 			elif res == GROUP_WORKS:
-				temp_text = self.get_formatted_post_works(message.text)
+				temp_text = self.get_formatted_post_works(message)
 			elif res == GROUP_NEWS:
-				temp_text = self.get_formatted_post_news(message.text)
+				temp_text = self.get_formatted_post_news(message)
 		print(temp_text, res)
 		return temp_text

@@ -8,11 +8,12 @@ from threading import Thread
 from services.ai import Ai
 
 class TelegramScrapperService:
-	def __init__(self, ai:Ai, account, urls_channels, preloader):
+	def __init__(self, ai_preloader, account, urls_channels, preloader):
 		self.account = account
 		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
 		self.scrapper = Scraper(self.account.api_id, self.account.api_hash)
-		self.ai = ai
+		self.ai_service = Ai(ai_preloader)
+
 		self.urls_channels = urls_channels
 		self.preloader = preloader
 
@@ -28,14 +29,20 @@ class TelegramScrapperService:
 					if int(message.id) <= int(url_id):
 						break
 					if message:
-						if message.text:
-							text = self.validate_message_text(message.text)
-							message.text = text
+						if not message.text:
+							continue
+						# 	text = self.validate_message_text(message.text)
+							# message.text = text
 						if is_first_message:
 							self.preloader.set_id_last_message(bot_name, url_name, message.id)
 							is_first_message = False
 						results.append(message)
-
+		all_data_messages = ""
+		for message in results[-10:]:
+			all_data_messages += message.text + "{symbol_split}"
+		
+		out = self.validate_message_text(all_data_messages)
+		print(out)
 		# message.text = self.ai.automatic_formatted_message(message)
 		# def _thread():
 		# 	Thread(target=)
@@ -50,7 +57,7 @@ class TelegramScrapperService:
 		return results
 	
 	def validate_message_text(self, text:str):
-		output = self.ai.automatic_formatted_message(text)
+		output = self.ai_service.get_formatted_post_works(text)
 		# output = re.sub(r'http://\S+|https://\S+', '', text)
 		return output
 

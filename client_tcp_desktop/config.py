@@ -1,0 +1,7 @@
+HOST = "127.0.0.1"
+PORT = 5003
+ADDR = f"{HOST}:{PORT}"
+
+WIN_TITLE = 'Platform "Ecosystem"'
+WIN_WIDTH = 900
+WIN_HEIGHT = 500

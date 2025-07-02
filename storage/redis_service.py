@@ -27,3 +27,10 @@ class RedisService():
 			settings[key.decode('utf-8')] = value.decode('utf-8')
 		return settings
 
+
+	def wtite_tcp_channel_data(self, addr:str, value:str):
+		self.redis_client.set(addr, value)
+
+	def read_tcp_channel_data(self, addr):
+		bytes_data = self.redis_client.get(addr)
+		return str(bytes_data, encoding='utf-8')

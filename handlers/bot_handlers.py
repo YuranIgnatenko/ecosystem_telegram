@@ -13,7 +13,6 @@ from lib_fetcher_image.fetcher import FetcherImage
 from aiogram.types import FSInputFile
 import logging
 import requests
-import random
 from storage.process_updating import ProcessUpdating, K_UPDATES, K_SENT, K_ERRORS
 from storage.bot_settings import BotSettings, K_IS_STARTED
 
@@ -82,15 +81,15 @@ class BotHandlers:
 							self.proc_updating.increment_errors()
 				self.bot_settings.switch_starting(False)
 				logging.info(f"Рассылка завершена для бота {self.bot_name}")
-				await answer_panel_bot(callback, self.bot_name, 0, False, f"🔔 Рассылка завершена")
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, False, f"🔔 Рассылка завершена")
 				
 			else:
 				logging.info(f"Обновления не найдены для бота {self.bot_name}")
 				self.bot_settings.switch_starting(False)
-				await answer_panel_bot(callback, self.bot_name, 0, False, f"Обновления не найдены для бота {self.bot_name}")
+				await answer_panel_bot(callback, self.bot_name, self.proc_updating, False, f"Обновления не найдены для бота {self.bot_name}")
 		else:
 			logging.info(f"Бот {self.bot_name} не активен")
-			await answer_panel_bot(callback, self.bot_name, 0, False, "⚠️ Бот не активен")
+			await answer_panel_bot(callback, self.bot_name, self.proc_updating, False, "⚠️ Бот не активен")
 
 	def download_image(self, url):
 		response = requests.get(url)
