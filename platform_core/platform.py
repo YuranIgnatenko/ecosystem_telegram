@@ -5,7 +5,9 @@ import conf
 
 from utils.logger import setup_logger, IgnoreFilterCustom
 
-from platform.generator_clusters import GeneratorClusters
+from platform_core.generator_clusters import GeneratorClusters
+
+from platform_core.tcp_contracts import extract_model_from_tcp_data
 
 logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
@@ -34,6 +36,9 @@ class Platform:
 							break
 						print(f"getting from client ({addr}) data : {str(data, encoding='utf-8')}")
 						conn.sendall(data)
+						model = extract_model_from_tcp_data(str(data, encoding='utf-8'))
+						# if model == -1:pass
+						print(type(model), model)
 					except ConnectionResetError:
 						print(f'client ({addr}) disconnected')
 

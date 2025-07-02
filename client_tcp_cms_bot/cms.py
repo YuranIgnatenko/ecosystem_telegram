@@ -1,24 +1,5 @@
-import asyncio
 import logging
-import datetime
-import io
-
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters.command import Command
-from aiogram.types import Message
-from utils.config import Config
-
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters.command import Command
-from aiogram.types import Message
-from aiogram.utils.keyboard import InlineKeyboardBuilder
-from aiogram.types import FSInputFile
-from tcp_clients.cms_tg_bot import cms_responses
-from utils.config import Config
-
-from tcp_clients.cms_tg_bot.cms_handlers import CmsHandlers
-from keyboards import tabs
-import logging
+from aiogram import Bot, Dispatcher
 
 from aiogram.client.session.aiohttp import AiohttpSession
 

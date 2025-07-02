@@ -1,8 +1,8 @@
-from platform.preloader import Preloader
-from platform.preloader import NAMEFILE_PRELOADER
+from platform_core.preloader import Preloader
+from platform_core.preloader import NAMEFILE_PRELOADER
 
 from bots.base import BotBase
-from tcp_clients.cms_tg_bot.cms import CmsBot
+from client_tcp_cms_bot.cms import CmsBot
 
 from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER
 from services.utils import TYPE_SERVICE_WEB_PARSER_IMAGES
