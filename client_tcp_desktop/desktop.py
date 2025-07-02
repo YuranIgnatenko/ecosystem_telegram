@@ -21,7 +21,7 @@ def desktop_start():
 
 	layout.addWidget(web_view)
 	window.setLayout(layout)
-	url = 'http://127.0.0.1:5000/mailbox'
+	url = 'http://127.0.0.1:5000/404'
 	Q_URL = QUrl()
 	Q_URL.setUrl(url)
 	web_view.setUrl(Q_URL) # Замените данный URL на URL вашего Flask приложения
@@ -33,6 +33,12 @@ def desktop_start():
 
 
 import threading
+
+import sys
+sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
+from storage.tcp_channel_data import TcpChannelData
+from config import ADDR
+TCP_CHANNEL_DATA = TcpChannelData()
 
 def thread_desktop_start():
 	thread_ = threading.Thread(target=desktop_start)

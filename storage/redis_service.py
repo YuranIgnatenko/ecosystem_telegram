@@ -33,4 +33,4 @@ class RedisService():
 
 	def read_tcp_channel_data(self, addr):
 		bytes_data = self.redis_client.get(addr)
-		return str(bytes_data, encoding='utf-8')
+		return str(bytes_data)

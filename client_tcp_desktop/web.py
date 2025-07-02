@@ -3,9 +3,13 @@
 from flask import Flask, render_template, redirect, jsonify, request
 import logging
 
-import socket
 
-TCP_DATA_CHANNEL = ""
+import sys
+sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
+from storage.tcp_channel_data import TcpChannelData
+from config import ADDR
+TCP_DATA_CHANNEL = TcpChannelData(addr=ADDR)
+
 
 # from utils.logger import OUTPUT_LOG_FILE
 # from services.utils import TYPE_SERVICE_TELEGRAM_SCRAPPER ,TYPE_SERVICE_WEB_PARSER_MEMES ,TYPE_SERVICE_WEB_PARSER_IMAGES ,TYPE_SERVICE_WEB_PARSER_VIDEO 
@@ -47,7 +51,8 @@ def root():
 
 @app.route('/404')  
 def p404():  
-	return render_template('404.html') 
+	value = TCP_DATA_CHANNEL.read()
+	return render_template('404.html', value = value) 
 
 @app.route('/500')  
 def p500():  
@@ -295,4 +300,3 @@ def thread_app_flask_run():
 	thread_app_flask = threading.Thread(target=app.run)
 	thread_app_flask.start()
 
-from storage.tcp_channel_data import TcpChannelData
