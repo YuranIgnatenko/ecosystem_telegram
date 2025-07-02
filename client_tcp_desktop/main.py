@@ -4,9 +4,9 @@ from desktop import thread_desktop_start
 
 import sys
 
-sys.path.append("storage")
+sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
 
-import storage.bot_settings
+from storage.tcp_channel_data import TcpChannelData
 
 # if __name__ == '__main__':
 thread_run_tcp_client()
