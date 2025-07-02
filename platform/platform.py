@@ -5,7 +5,7 @@ import conf
 
 from utils.logger import setup_logger, IgnoreFilterCustom
 
-from platform_ecosystem.generator_clusters import GeneratorClusters
+from platform.generator_clusters import GeneratorClusters
 
 logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
@@ -22,7 +22,7 @@ class Platform:
 	# supporting only one client
 	def tcp_listener_start(self):
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-			s.bind((conf.HOST, conf.PORT))
+			s.bind((conf.HOST, conf.PORT))	
 			s.listen()
 			conn, addr = s.accept()
 			with conn:

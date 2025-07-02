@@ -1,5 +1,5 @@
-from platform_ecosystem.preloader import Preloader
-from platform_ecosystem.preloader import NAMEFILE_PRELOADER
+from platform.preloader import Preloader
+from platform.preloader import NAMEFILE_PRELOADER
 
 from bots.base import BotBase
 from tcp_clients.cms_tg_bot.cms import CmsBot

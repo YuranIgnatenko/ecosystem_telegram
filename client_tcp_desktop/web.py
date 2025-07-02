@@ -16,7 +16,7 @@ TCP_DATA_CHANNEL = TcpChannelData(addr=ADDR)
 # from services import posting
 # from random import randint
 
-# from ajax.cluster_bots import ClusterBots
+from client_tcp_desktop.ajax.cluster_bots import ClusterBots
 # from ajax.cluster_channels import ClusterChannels
 # from ajax.cluster_services import ClusterServices	
 # from storage.bot_settings import Bot
@@ -27,13 +27,15 @@ import threading
 
 # redis_service = RedisService()
 
+bots = TCP_DATA_CHANNEL.read()
+
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-# @app.route('/update_cluster_bots')
-# async def update_cluster_bots():
-# 	data = ClusterBots().get(bots)
-# 	return jsonify(data)
+@app.route('/update_cluster_bots')
+async def update_cluster_bots():
+	data = ClusterBots().get(bots)
+	return jsonify(data)
 
 # @app.route('/update_cluster_channels')
 # async def update_cluster_channels():

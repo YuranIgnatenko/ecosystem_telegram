@@ -1,11 +1,10 @@
-from storage.redis_service import RedisService
 
 K_BOT_NAME = "bot_name"
 K_SERVICE_TYPE = "service_type"
 K_IS_STARTED = "is_started"
 
 class BotSettings():
-	def __init__(self, bot_name, bot_service_type=None, redis_service=RedisService()):
+	def __init__(self, bot_name, bot_service_type=None, redis_service=None):
 		self.redis_service = redis_service
 		self.bot_name = bot_name
 		self.settings = {

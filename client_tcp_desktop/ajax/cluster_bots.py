@@ -1,6 +1,10 @@
 from utils.config import Config
 from utils.logger import OUTPUT_LOG_FILE
-from storage.bot_settings import Bot
+
+import sys
+sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
+
+# from storage.bot_settings import Bot
 from storage.process_updating import ProcessUpdating
 
 class ClusterBots():
