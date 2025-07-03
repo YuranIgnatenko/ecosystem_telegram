@@ -9,6 +9,11 @@ from platform_core.generator_clusters import GeneratorClusters
 
 from platform_core.tcp_contracts import extract_model_from_tcp_data
 
+from storage.tcp_channel_data import TcpChannelData
+
+from conf import ADDR
+tcp_chan_data_storage = TcpChannelData(addr=ADDR)
+
 logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
 
@@ -23,6 +28,7 @@ class Platform:
 
 	# supporting only one client
 	def tcp_listener_start(self):
+		print("tcp server starting")
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 			s.bind((conf.HOST, conf.PORT))	
 			s.listen()
@@ -36,7 +42,9 @@ class Platform:
 							break
 						print(f"getting from client ({addr}) data : {str(data, encoding='utf-8')}")
 						conn.sendall(data)
-						model = extract_model_from_tcp_data(str(data, encoding='utf-8'))
+						tcp_chan_data_storage.write(data)
+						
+						model = extract_model_from_tcp_data(tcp_chan_data_storage.read())
 						# if model == -1:pass
 						print(type(model), model)
 					except ConnectionResetError:

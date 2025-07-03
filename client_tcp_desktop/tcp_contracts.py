@@ -14,6 +14,8 @@ SPHV = SYMBOL_SPLIT_HERE_VALUE
 SYMBOL_SPLIT_HERE_TYPE = "symbol_split_here_type"
 SPHT = SYMBOL_SPLIT_HERE_TYPE
 
+test_line = "type_botsymbol_split_here_type578854symbol_split_here_valuename bot privatesymbol_split_here_valuestatus -- ok"
+
 class ModelBot:
 	'''token & bot_name & status'''
 	def __init__(self, value:str):
@@ -53,6 +55,7 @@ class ModelPingPong:
 	
 def extract_model_from_tcp_data(data):
 	'''returned negative number if fixed error parsing string'''
+	data = str(data).replace("b'", "")
 	print(data)
 	parts = [d.split() for d in data.split(SPHT)]
 	if len(parts) != 2:

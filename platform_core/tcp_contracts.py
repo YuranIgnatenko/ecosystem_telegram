@@ -1,3 +1,6 @@
+ERROR_SPLIT_TYPE_VALUE = -1
+ERROR_NOT_FOUND_TYPE = -2
+
 TYPE_BOT = "type_bot"
 TYPE_ADMIN = "type_admin"
 TYPE_MESSAGE = "type_message"
@@ -11,10 +14,13 @@ SPHV = SYMBOL_SPLIT_HERE_VALUE
 SYMBOL_SPLIT_HERE_TYPE = "symbol_split_here_type"
 SPHT = SYMBOL_SPLIT_HERE_TYPE
 
+test_line = "type_botsymbol_split_here_type578854symbol_split_here_valuename bot privatesymbol_split_here_valuestatus -- ok"
+
 class ModelBot:
 	'''token & bot_name & status'''
 	def __init__(self, value:str):
 		parts = [v.strip() for v in value.split(SPHV)]
+		print(value, parts)
 		self.token = parts[0]
 		self.name = parts[1]
 		self.status = parts[2]
@@ -50,20 +56,18 @@ class ModelPingPong:
 	
 def extract_model_from_tcp_data(data):
 	'''returned negative number if fixed error parsing string'''
+	data = str(data).replace("b'", "")
 	print(data)
 	parts = [d.split() for d in data.split(SPHT)]
 	if len(parts) != 2:
-		return -1
+		return ERROR_SPLIT_TYPE_VALUE
 	
-	type_, value_ = parts[0], parts[1]
-	if type_ not in TYPES_ALL_LIST:
-		print(type_, TYPES_ALL_LIST)
-		return -2
+	type_, value_ = parts[0][0], parts[1][0]
+	if str(type_) not in TYPES_ALL_LIST:
+		return ERROR_NOT_FOUND_TYPE
 	
 	if type_ == TYPE_PING_PONG:
 		return ModelPingPong()
 	elif type_ == TYPE_BOT:
 		return ModelBot(value_)
-	else:
-		return -3
 

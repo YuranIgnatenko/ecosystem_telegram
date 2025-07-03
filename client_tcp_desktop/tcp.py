@@ -1,15 +1,17 @@
 import threading
 import socket
 
-import config as conf
 import os 
 
+from tcp_contracts import extract_model_from_tcp_data
+
 import sys
+import  config
+
 sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
 from storage.tcp_channel_data import TcpChannelData
-from config import ADDR
-TCP_CHANNEL_DATA = TcpChannelData(addr=ADDR)
-# TCP_CHANNEL_DATA.write("test string writing ... ++++++")
+
+tcp_chan_data_storage = TcpChannelData(addr=config.ADDR)
 
 def thread_run_tcp_client():
 	thread_bots_launch = threading.Thread(target=run_tcp_client)
@@ -17,14 +19,14 @@ def thread_run_tcp_client():
 
 def run_tcp_client():
 	isRunClient = False
-	countAgainConnect = 2
+	countAgainConnect = 10
 	print("web client starting")
 
 	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 		for i in range(countAgainConnect):
 			if not isRunClient: 	
 				try:
-					s.connect((conf.HOST, conf.PORT))
+					s.connect((config.HOST, config.PORT))
 					isRunClient = True
 				except ConnectionRefusedError:
 					print(f"attempt connenction: {i+1}/{countAgainConnect}")
@@ -42,9 +44,13 @@ def run_tcp_client():
 				s.sendall(bytes(data, encoding='utf-8'))
 				data = s.recv(1024)
 				if data:
-					value = str(data, encoding='utf-8')
-					TCP_CHANNEL_DATA.write(value)
-					print(f"data from server {value}")
+					tcp_chan_data_storage.write(str(data.decode()))
+
+					print(f"data from server {data}")
+					model = extract_model_from_tcp_data(tcp_chan_data_storage.read())
+						# if model == -1:pass
+					print(type(model), model)
+
 			except ConnectionResetError:
 				print("tcp listener to stopped")
 				s.shutdown(socket.SHUT_RDWR)

@@ -1,3 +1,3 @@
 HOST = "127.0.0.1"
-PORT = 6002
-ADDR = "127.0.0.1:5003"
+PORT = 5003
+ADDR = f"{HOST}:{PORT}"
