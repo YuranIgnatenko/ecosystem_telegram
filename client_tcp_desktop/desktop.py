@@ -24,8 +24,8 @@ def desktop_start():
 	Q_URL.setUrl(url)
 	web_view.setUrl(Q_URL)
 
-	window.show()
-	# window.showMaximized()
+	# window.show()
+	window.showMaximized()
 
 	sys.exit(app.exec_())
 

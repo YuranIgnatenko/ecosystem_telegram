@@ -4,6 +4,19 @@ from flask import Flask, render_template, redirect, jsonify, request
 import logging
 import threading
 
+from models import * 
+
+page_data = ModelPageData(
+	platform_info=ModelPlatformInfo(
+		title="Platform Ecosystem",
+		logo_url="",
+	),
+	user_data=ModelUserData(
+		login="admin",
+		email="admin@admin.ext"
+	)
+)
+
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
@@ -36,6 +49,11 @@ def login():
 @app.route('/register')
 def register(): 
 	return render_template('register.html')
+
+
+@app.route('/account-detail')
+def account_detail(): 
+	return render_template('account.html')
 
 def thread_app_flask_run():
 	thread_app_flask = threading.Thread(target=app.run)
