@@ -32,10 +32,10 @@ bots = TCP_DATA_CHANNEL.read()
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-@app.route('/update_cluster_bots')
-async def update_cluster_bots():
-	data = ClusterBots().get(bots)
-	return jsonify(data)
+# @app.route('/update_cluster_bots')
+# async def update_cluster_bots():
+# 	data = ClusterBots().get(bots)
+# 	return jsonify(data)
 
 # @app.route('/update_cluster_channels')
 # async def update_cluster_channels():

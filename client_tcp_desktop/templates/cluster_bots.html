@@ -1018,7 +1018,7 @@
 								<tr>
 									<td><img src="{{ bot.image }}" alt="" /></td>
 									<td>@{{ bot.name }}</td>
-									<td>
+									<!-- <td>
 										{% if bot.status_notifier %}
 										<button id="{{ bot.name }}_status_notifier" class="pd-setting">{{
 											bot.status_notifier
@@ -1028,17 +1028,17 @@
 											bot.status_notifier
 											}}</button>
 										{% endif %}
-									</td>
-									<td>
-										{% if bot.status %}
+									</td> -->
+									<!-- <td> -->
+										<!-- {% if bot.status %}
 										<button id="{{ bot.name }}_status" class="pd-setting">{{ bot.status }}</button>
 										{% else %}
 										<button id="{{ bot.name }}_status" class="pd-setting-ed">{{ bot.status
 											}}</button>
-										{% endif %}
-									</td>
-									<td id="{{ bot.name }}_progress">{{ bot.process_updating.__str__() }}%</td>
-									<td>{{ bot.last_started }}</td>
+										{% endif %} -->
+									<!-- </td> -->
+									<!-- <td id="{{ bot.name }}_progress">{{ bot.process_updating.__str__() }}%</td> -->
+									<!-- <td>{{ bot.last_started }}</td> -->
 
 									<td>
 										<button data-toggle="tooltip" title="Start" class="pd-setting-ed"><i
