@@ -46,12 +46,12 @@ class Platform:
 							continue
 						old_data = data
 						print(f"getting from client ({addr}) data : {data}")
-						conn.sendall(bytes(data, encoding='utf-8'))
-						tcp_chan_data_storage.write(data)
+						# conn.sendall(bytes(data, encoding='utf-8'))
+						# tcp_chan_data_storage.write(data)
 						
-						model = extract_model_from_tcp_data(tcp_chan_data_storage.read())
-						# if model == -1:pass
-						print(type(model), model)
+						# model = extract_model_from_tcp_data(tcp_chan_data_storage.read())
+						# # if model == -1:pass
+						# print(type(model), model)
 					except ConnectionResetError:
 						print(f'client ({addr}) disconnected')
 

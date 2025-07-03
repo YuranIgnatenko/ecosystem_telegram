@@ -5,11 +5,11 @@ import logging
 import threading
 
 from models import * 
-import sys
+import sys, socket
 
 sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
 from storage.tcp_channel_data import TcpChannelData
-from config import TCP_ADDR
+from config import TCP_ADDR, TCP_HOST, TCP_PORT
 
 TCP_STORAGE = TcpChannelData(addr=TCP_ADDR)
 
@@ -27,6 +27,23 @@ page_data = ModelPageData(
 		logo_url="static/img/notification/4.jpg"
 	)
 )
+
+
+client_tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+countAgainConnect = 10
+isRunClient = False
+
+for i in range(countAgainConnect):
+	if not isRunClient: 	
+		try:
+			client_tcp_socket.connect((TCP_HOST, TCP_PORT))
+			isRunClient = True
+		except ConnectionRefusedError:
+			print(f"attempt connenction: {i+1}/{countAgainConnect}")
+	else:
+		break
+
 
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -67,14 +84,16 @@ def control():
 
 @app.route('/fetch_start_posting')
 def fetch_start_posting():
-	print("click fetch on")
-	TCP_STORAGE.write(str(1))
+	cmd = "fetch -- ok"
+	print(cmd)
+	client_tcp_socket.send(cmd.encode())
 	return render_template('control.html', page_data = page_data)
 
 @app.route('/fetch_stop_posting')
 def fetch_stop_posting():
-	print("click fetch off")
-	TCP_STORAGE.write(str(0))
+	cmd = "fetch -- off"
+	print(cmd)
+	client_tcp_socket.send(cmd.encode())
 	return render_template('control.html', page_data = page_data)
 
 def thread_app_flask_run():
