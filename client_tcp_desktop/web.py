@@ -84,14 +84,14 @@ def control():
 
 @app.route('/fetch_start_posting')
 def fetch_start_posting():
-	cmd = "fetch -- ok"
+	cmd = "1"
 	print(cmd)
 	client_tcp_socket.send(cmd.encode())
 	return render_template('control.html', page_data = page_data)
 
 @app.route('/fetch_stop_posting')
 def fetch_stop_posting():
-	cmd = "fetch -- off"
+	cmd = "0"
 	print(cmd)
 	client_tcp_socket.send(cmd.encode())
 	return render_template('control.html', page_data = page_data)

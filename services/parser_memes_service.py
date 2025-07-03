@@ -17,7 +17,7 @@ class ParserMemesService:
 		self.parser.URL_SRC = random.choice(self.array_urls)
 		tasks = [self.parser.get_random_file()]
 		list_files = await asyncio.gather(*tasks)
-		list_files = [item.gif for item in list_files]
+		# list_files = [item.gif for item in list_files]
 		return list_files
 	
 	async def close(self):

@@ -25,7 +25,11 @@ class TelegramScrapperService:
 			is_first_message = True
 			message_list = await self.scrapper.get_last_messages(url_name)
 			if message_list:
+				c = 0
 				for message in message_list:
+					c+=1
+					if c == 5:
+						break
 					if int(message.id) <= int(url_id):
 						break
 					if message:
@@ -37,12 +41,12 @@ class TelegramScrapperService:
 							self.preloader.set_id_last_message(bot_name, url_name, message.id)
 							is_first_message = False
 						results.append(message)
-		all_data_messages = ""
-		for message in results[-10:]:
-			all_data_messages += message.text + "{symbol_split}"
+		# all_data_messages = ""
+		# for message in results[-10:]:
+		# 	all_data_messages += message.text + "{symbol_split}"
 		
-		out = self.validate_message_text(all_data_messages)
-		print(out)
+		# # out = self.validate_message_text(all_data_messages)
+		print(results)
 		# message.text = self.ai.automatic_formatted_message(message)
 		# def _thread():
 		# 	Thread(target=)
