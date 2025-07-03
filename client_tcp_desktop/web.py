@@ -25,6 +25,10 @@ def p500():
 def blog():  
 	return render_template('blog.html')
 
+@app.route('/mailbox')  
+def mailbox():  
+	return render_template('mailbox.html')
+
 @app.route('/login')
 def login(): 
 	return render_template('login.html')
