@@ -74,8 +74,9 @@
 
 			<div class="nalika-profile">
 				<div class="profile-dtl">
-					<a href="#"><img src="static/img/notification/4.jpg" alt="" /></a>
-					<h2>Пользователь test</h2>
+					<a href="#"><img src="{{ page_data.user_data.logo_url }}" alt="" /></a>
+					<h2>{{ page_data.user_data.login }}</h2>
+					<h5>{{ page_data.user_data.email }}</h5>
 				</div>
 			</div>
 
@@ -482,18 +483,19 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="footer-copyright-area">
+		<div class="footer-copyright-area">
 			<div class="container-fluid">
 				<div class="row">
 					<div class="col-lg-12">
-						 <div class="footer-copy-right">
-							<p>Copyright © 2018 <a href="https://colorlib.com/wp/templates/">Colorlib</a> All rights
-								reserved.</p>
-						</div> 
+						<div class="footer-copy-right">
+							<p>{{ page_data.platform_info.year }} <a
+									href="{{ page_data.platform_info.telegram_channel_url_news }}">Подписывайтесь на
+									новости 🔥</a> <br> {{ page_data.platform_info.telegram_channel_url_news }}</p>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div> -->
+		</div>
 	</div>
 
 	<!-- jquery
