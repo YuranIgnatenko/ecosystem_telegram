@@ -5,6 +5,13 @@ import logging
 import threading
 
 from models import * 
+import sys
+
+sys.path.append(r"C:\Users\EliteBook\Desktop\Code\ecosystem_telegram")
+from storage.tcp_channel_data import TcpChannelData
+from config import TCP_ADDR
+
+TCP_STORAGE = TcpChannelData(addr=TCP_ADDR)
 
 page_data = ModelPageData(
 	platform_info=ModelPlatformInfo(
@@ -24,7 +31,7 @@ page_data = ModelPageData(
 app = Flask(__name__)
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
-225
+
 @app.route('/404')  
 def p404():
 	return render_template('404.html', page_data = page_data) 
@@ -49,10 +56,26 @@ def login():
 def register(): 
 	return render_template('register.html', page_data = page_data)
 
-
 @app.route('/account')
-def account_detail(): 
+def account(): 
 	return render_template('account.html', page_data = page_data)
+
+@app.route('/control')
+def control(): 
+	return render_template('control.html', page_data = page_data)
+
+
+@app.route('/fetch_start_posting')
+def fetch_start_posting():
+	print("click fetch on")
+	TCP_STORAGE.write(str(1))
+	return render_template('control.html', page_data = page_data)
+
+@app.route('/fetch_stop_posting')
+def fetch_stop_posting():
+	print("click fetch off")
+	TCP_STORAGE.write(str(0))
+	return render_template('control.html', page_data = page_data)
 
 def thread_app_flask_run():
 	thread_app_flask = threading.Thread(target=app.run)

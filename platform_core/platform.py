@@ -11,8 +11,8 @@ from platform_core.tcp_contracts import extract_model_from_tcp_data
 
 from storage.tcp_channel_data import TcpChannelData
 
-from conf import ADDR
-tcp_chan_data_storage = TcpChannelData(addr=ADDR)
+from conf import TCP_ADDR
+tcp_chan_data_storage = TcpChannelData(addr=TCP_ADDR)
 
 logger = setup_logger()
 logger.addFilter(IgnoreFilterCustom())
@@ -28,9 +28,10 @@ class Platform:
 
 	# supporting only one client
 	def tcp_listener_start(self):
+		old_data = ""
 		print("tcp server starting")
 		with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-			s.bind((conf.HOST, conf.PORT))	
+			s.bind((conf.TCP_HOST, conf.TCP_PORT))	
 			s.listen()
 			conn, addr = s.accept()
 			with conn:
@@ -40,8 +41,12 @@ class Platform:
 						data = conn.recv(1024)
 						if not data:
 							break
-						print(f"getting from client ({addr}) data : {str(data, encoding='utf-8')}")
-						conn.sendall(data)
+						data = str(data)
+						if old_data == data:
+							continue
+						old_data = data
+						print(f"getting from client ({addr}) data : {data}")
+						conn.sendall(bytes(data, encoding='utf-8'))
 						tcp_chan_data_storage.write(data)
 						
 						model = extract_model_from_tcp_data(tcp_chan_data_storage.read())

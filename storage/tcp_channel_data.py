@@ -11,7 +11,7 @@ class TcpChannelData():
 		self.redis_service.wtite_tcp_channel_data(self.addr, self.value)
 
 	def read(self) -> str:
-		return self.redis_service.read_tcp_channel_data(self.addr)
+		return self.redis_service.read_tcp_channel_data(self.addr).strip()
 	
 	def __str__(self):
 		return f"{self.redis_service.read_tcp_channel_data(self.addr)}"
