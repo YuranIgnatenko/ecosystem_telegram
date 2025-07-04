@@ -8,10 +8,10 @@ from threading import Thread
 from services.ai import Ai
 
 class TelegramScrapperService:
-	def __init__(self, ai_preloader, account, urls_channels, preloader):
+	def __init__(self, ai_preloader, account, urls_channels, preloader, scrapper):
 		self.account = account
 		self.type_service = TYPE_SERVICE_TELEGRAM_SCRAPPER
-		self.scrapper = Scraper(self.account.api_id, self.account.api_hash)
+		self.scrapper = scrapper
 		self.ai_service = Ai(ai_preloader)
 
 		self.urls_channels = urls_channels

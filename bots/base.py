@@ -22,7 +22,7 @@ class BotBase:
 		self.redis_service = redis_service
 		self.is_started = False
 
-		self.bot = Bot(token=token, session=AiohttpSession())
+		self.bot = Bot(token=token) #, session=None)
 		self.dp = Dispatcher()
 		
 		self.bot_handlers = BotHandlers(self.bot_name, self.bot, self.service_type, self.admin_user_id, self.channel_chat_id, self.redis_service)

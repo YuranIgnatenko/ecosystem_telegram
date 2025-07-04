@@ -27,6 +27,16 @@ class Platform:
 			return bot.launch()
 		await asyncio.gather(*[asyncio.create_task(new_task(bot)) for bot in self.cluster.cluster_bots])	
 
+	async def test_tcp(self):
+		for bot in self.cluster.cluster_bots:
+			print(bot.bot_name, bot.service_type)
+			if bot.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
+				await bot.bot_handlers.posting_telegram_scrapper_tcp()
+
+			# elif bot.service_type in [TYPE_SERVICE_WEB_PARSER_MEMES, TYPE_SERVICE_WEB_PARSER_IMAGES]:
+			# 	await bot.bot_handlers.posting_web_parser_tcp()
+
+
 	# supporting only one client
 	async def tcp_listener_start(self):
 		print("tcp server starting")
@@ -68,6 +78,13 @@ class Platform:
 						print(f'client ({addr}) disconnected')
 
 	def launch(self):
+		def _th0():
+			print("start test tcp")
+			asyncio.run(self.test_tcp())
+
+		self.th0 = threading.Thread(target=_th0)
+		self.th0.start()
+
 		def _th():
 			asyncio.run(self.tcp_listener_start())
 
