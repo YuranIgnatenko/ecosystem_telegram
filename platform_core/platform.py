@@ -27,7 +27,9 @@ class Platform:
 		def new_task(bot):
 			return bot.launch()
 		temp = [asyncio.create_task(new_task(bot)) for bot in self.cluster.cluster_bots]
-		temp.append(asyncio.create_task(self.test_tcp()))
+		# temp.append(asyncio.create_task(self.test_tcp()))
+		temp.append(asyncio.create_task(self.tcp_listener_start()))
+
 		await asyncio.gather(*temp)	
 
 	async def test_tcp(self):
@@ -61,15 +63,7 @@ class Platform:
 						if data == "0":
 							pass
 						elif data == "1":
-							for bot in self.cluster.cluster_bots:
-								try:
-									if bot.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
-										await bot.bot_handlers.posting_telegram_scrapper_tcp()
-
-									elif bot.service_type in [TYPE_SERVICE_WEB_PARSER_MEMES, TYPE_SERVICE_WEB_PARSER_IMAGES]:
-										await bot.bot_handlers.posting_web_parser_tcp()
-								except Exception as e:
-									print(e)
+							await self.test_tcp()
 
 
 						# conn.sendall(bytes(data, encoding='utf-8'))
@@ -82,14 +76,15 @@ class Platform:
 						print(f'client ({addr}) disconnected')
 
 	def launch(self):
-		def _th0():
-			print("start test tcp")
-			asyncio.run(self.test_tcp())
+		# def _th0():
+		# 	print("start test tcp")
+		# 	asyncio.run(self.test_tcp())
 
-		self.th0 = threading.Thread(target=_th0)
-		self.th0.start()
+		# self.th0 = threading.Thread(target=_th0)
+		# self.th0.start()
 
 		def _th():
+			print("start tcp listener")
 			asyncio.run(self.tcp_listener_start())
 
 		self.thread_tcp_listener = threading.Thread(target=_th)
