@@ -154,8 +154,8 @@ class BotHandlers:
 			self.proc_updating.set_updates(len(content_list))
 			for message in content_list:
 				if message.text:
-					if not self.bot_settings.settings[K_IS_STARTED]:
-						return
+					# if not self.bot_settings.settings[K_IS_STARTED]:
+					# 	return
 					try:	
 						await self.bot.send_message(self.channel_chat_id, message.text)
 						await asyncio.sleep(2)

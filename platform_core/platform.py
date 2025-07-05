@@ -21,13 +21,17 @@ logger.addFilter(IgnoreFilterCustom())
 class Platform:
 	def __init__(self):
 		self.cluster = GeneratorClusters()
+		asyncio.run(self.cluster_start())
 
 	async def cluster_start(self):
 		def new_task(bot):
 			return bot.launch()
-		await asyncio.gather(*[asyncio.create_task(new_task(bot)) for bot in self.cluster.cluster_bots])	
+		temp = [asyncio.create_task(new_task(bot)) for bot in self.cluster.cluster_bots]
+		temp.append(asyncio.create_task(self.test_tcp()))
+		await asyncio.gather(*temp)	
 
 	async def test_tcp(self):
+		print("started tcp test")
 		for bot in self.cluster.cluster_bots:
 			print(bot.bot_name, bot.service_type)
 			if bot.service_type == TYPE_SERVICE_TELEGRAM_SCRAPPER:
@@ -91,7 +95,7 @@ class Platform:
 		self.thread_tcp_listener = threading.Thread(target=_th)
 		self.thread_tcp_listener.start()
 
-		asyncio.run(self.cluster_start())	
+		# asyncio.run(self.cluster_start())	
 
 
 
